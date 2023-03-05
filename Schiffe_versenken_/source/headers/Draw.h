@@ -5,43 +5,43 @@
 #include <Windows.h>
 #include "player.h"
 #include "global.h"
-using namespace std;
+
 class Draw
 {
-	vector<string> moeglichkeiten = { "Player vs Player\n",
+	std::vector<std::string> moeglichkeiten = {
+		"Player vs Player\n",
 		"Single Player(random placement von schiffen mit highscore)\n",
 		"Player vs Computer\n",
-		"Computer vs Computer\n" };
-
-	string importante = "";
-	bool game_end = 0;
-	vector<string> mapp = {
-"                Player 1:                                                    ",
-"                  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                  ",
-"                ---------------------------------------------                ",
-"                A | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | A                ",
-"                ---------------------------------------------                ",
-"                B | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | B                ",
-"                ---------------------------------------------                ",
-"                C | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | C                ",
-"                ---------------------------------------------                ",
-"                D | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | D                ",
-"                ---------------------------------------------                ",
-"                E | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | E                ",
-"                ---------------------------------------------                ",
-"                F | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | F                ",
-"                ---------------------------------------------                ",
-"                G | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | G                ",
-"                ---------------------------------------------                ",
-"                H | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | H                ",
-"                ---------------------------------------------                ",
-"                I | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | I                ",
-"                ---------------------------------------------                ",
-"                J | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | J                ",
-"                ---------------------------------------------                ",
-"                  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                  "
+		"Computer vs Computer\n" 
 	};
-	vector<string> mapp2 = {
+	std::vector<std::string> mapp = {
+		"Player 1:                                                    ",
+		"  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                  ",
+		"---------------------------------------------                ",
+		"A | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | A                ",
+		"---------------------------------------------                ",
+		"B | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | B                ",
+		"---------------------------------------------                ",
+		"C | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | C                ",
+		"---------------------------------------------                ",
+		"D | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | D                ",
+		"---------------------------------------------                ",
+		"E | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | E                ",
+		"---------------------------------------------                ",
+		"F | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | F                ",
+		"---------------------------------------------                ",
+		"G | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | G                ",
+		"---------------------------------------------                ",
+		"H | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | H                ",
+		"---------------------------------------------                ",
+		"I | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | I                ",
+		"---------------------------------------------                ",
+		"J | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | ~ | J                ",
+		"---------------------------------------------                ",
+		"  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                  "
+	};
+	std::string map = "                ";
+	std::vector<std::string> mapp2 = {
 		"Player 2:                                                    ",
 		"  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                  ",
 		"---------------------------------------------                ",
@@ -67,7 +67,7 @@ class Draw
 		"---------------------------------------------                ",
 		"  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                  "
 	};
-	vector<string> mapp3 = {
+	std::vector<std::string> mapp3 = {
 		"                                ",
 		"Legende:                        ",
 		"                                ",
@@ -94,7 +94,7 @@ class Draw
 		"                                ",
 	};
 
-	vector<string> mappp = {
+	std::vector<std::string> mappp = {
 		"",
 		"",
 		"",
@@ -125,9 +125,9 @@ class Draw
 		"                                     ",
 		"                                     ",
 	};
-	char* playptr1 = &mapp[0][23];
+	char* playptr1 = &mapp[0][7];
 	char* playptr2 = &mapp2[0][7];
-	vector<vector<char*>> charptrs = {
+	std::vector<std::vector<char*>> charptrs = {
 		{&mapp[3][4],&mapp[3][8],&mapp[3][12],&mapp[3][16],&mapp[3][20], &mapp[3][24], &mapp[3][28], &mapp[3][32], &mapp[3][36], &mapp[3][40]},
 		{&mapp[5][4],&mapp[5][8],&mapp[5][12],&mapp[5][16],&mapp[5][20], &mapp[5][24], &mapp[5][28], &mapp[5][32], &mapp[5][36], &mapp[5][40]},
 		{&mapp[7][4],&mapp[7][8],&mapp[7][12],&mapp[7][16],&mapp[7][20], &mapp[7][24], &mapp[7][28], &mapp[7][32], &mapp[7][36], &mapp[7][40]},
@@ -139,7 +139,7 @@ class Draw
 		{&mapp[19][4],&mapp[19][8],&mapp[19][12],&mapp[19][16],&mapp[19][20], &mapp[19][24], &mapp[19][28], &mapp[19][32], &mapp[19][36], &mapp[19][40]},
 		{&mapp[22][4],&mapp[22][8],&mapp[22][12],&mapp[22][16],&mapp[22][20], &mapp[22][24], &mapp[22][28], &mapp[22][32], &mapp[22][36], &mapp[22][40]},
 	};
-	vector<vector<char*>> charptrs2 = {
+	std::vector<std::vector<char*>> charptrs2 = {
 		{&mapp2[3][4],&mapp2[3][8],&mapp2[3][12],&mapp2[3][16],&mapp2[3][20], &mapp2[3][24], &mapp2[3][28], &mapp2[3][32], &mapp2[3][36], &mapp2[3][40]},
 		{&mapp2[5][4],&mapp2[5][8],&mapp2[5][12],&mapp2[5][16],&mapp2[5][20], &mapp2[5][24], &mapp2[5][28], &mapp2[5][32], &mapp2[5][36], &mapp2[5][40]},
 		{&mapp2[7][4],&mapp2[7][8],&mapp2[7][12],&mapp2[7][16],&mapp2[7][20], &mapp2[7][24], &mapp2[7][28], &mapp2[7][32], &mapp2[7][36], &mapp2[7][40]},
@@ -151,26 +151,27 @@ class Draw
 		{&mapp2[19][4],&mapp2[19][8],&mapp2[19][12],&mapp2[19][16],&mapp2[19][20], &mapp2[19][24], &mapp2[19][28], &mapp2[19][32], &mapp2[19][36], &mapp2[19][40]},
 		{&mapp2[21][4],&mapp2[21][8],&mapp2[21][12],&mapp2[21][16],&mapp2[21][20], &mapp2[21][24], &mapp2[21][28], &mapp2[21][32], &mapp2[21][36], &mapp2[21][40]},
 	};
-	vector<vector<char*>> charptrs3 = {
-		{&mapp3[17][7],&mapp3[17][24]},
-		{&mapp3[18][7],&mapp3[18][24]},
-		{&mapp3[19][7],&mapp3[19][24]},
-		{&mapp3[20][7],&mapp3[20][24]}
+	std::vector<std::vector<char*>> charptrs3 = {
+		{&mapp3[17][7],&mapp3[17][23]},
+		{&mapp3[18][7],&mapp3[18][23]},
+		{&mapp3[19][7],&mapp3[19][23]},
+		{&mapp3[20][7],&mapp3[20][23]}
 	};
-	string nthing = " ";
+	std::string nthing = " ";
+	std::string importante = "";
+	bool game_end = 0;
+	
 	friend class Player;
 public:
-	void drawMap(HANDLE&);
-	void makeMap(string);
-	int stoii(string& , int );
-	int stoiix(string&);
-	void wahlget(int&, string&, int);
-	void changeenemyMap();
-	void drawPvP(HANDLE&);
-	void drawPv();
-	void drawPvC();
-	void drawCvC();
-	void setansig(string&);
-	wstring s2ws(const string& , bool);
+	void drawMap(HANDLE&,int);
+	void makeMap(std::string);
+	int stoii(std::string& , int );
+	void wahlget(int&, std::string&, int);
+	void drawPvP(HANDLE&,Draw&, Player&);
+	void drawPv(HANDLE&, Draw&, Player&);
+	void drawPvC(HANDLE&, Draw&, Player&);
+	void drawCvC(HANDLE&, Draw&, Player&);
+	void setansig(std::string&);
+	std::wstring s2ws(const std::string& , bool);
 };
 

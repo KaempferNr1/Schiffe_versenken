@@ -15,36 +15,36 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="source\main.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="Draw.cpp">
+    <ClCompile Include="source\Draw.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="computer.cpp">
+    <ClCompile Include="source\computer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
+    <ClCompile Include="source\player.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="highscore.cpp">
+    <ClCompile Include="source\highscore.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Draw.h">
+    <ClInclude Include="source\headers\Draw.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="computer.h">
+    <ClInclude Include="source\headers\computer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="global.h">
+    <ClInclude Include="source\headers\global.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="player.h">
+    <ClInclude Include="source\headers\player.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="highscore.h">
+    <ClInclude Include="source\headers\highscore.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

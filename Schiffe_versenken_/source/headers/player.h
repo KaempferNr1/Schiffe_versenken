@@ -6,12 +6,11 @@
 #include <random>
 #include "global.h"
 #include "Draw.h"
-using namespace std;
+
 class Player
 {
 private:
-
-	vector<vector<bool>> ships1 = {
+	std::vector<std::vector<bool>> ships1 = {
 		{0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0},
@@ -23,7 +22,7 @@ private:
 		{0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0},
 	};
-	vector<vector<bool>> ships2forp1 = {
+	std::vector<std::vector<bool>> ships2forP1 = {
 		{0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0},
@@ -42,7 +41,7 @@ private:
 	int shiff3left1 = 2;
 	int shiff4left1 = 1;
 
-	vector<vector<bool>> ships2 = {
+	std::vector<std::vector<bool>> ships2 = {
 		{0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0},
@@ -54,7 +53,7 @@ private:
 		{0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0},
 	};
-	vector<vector<bool>> ships1forp2 = {
+	std::vector<std::vector<bool>> ships1forP2 = {
 		{0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0},
@@ -74,15 +73,18 @@ private:
 	int shiff4left2 = 1;
 	friend class Draw;
 public:
-	void placeships();
+	void placeships(Draw&);
 	void shipmanager();
-	void movemaker(int&, int&, int);
-	void hitmanager(int&, int&, int);
-	void makemap(vector<vector<bool>>&, vector<vector<bool>>&, vector<vector<char*>>&, bool);
+	void movemaker(int&, int&, int, Draw&);
+	void hitmanager(int&, int&, int, Draw&);
+	void makemap(std::vector<std::vector<bool>>&, std::vector<std::vector<bool>>&, std::vector<std::vector<char*>>&, bool);
 	bool validmove(int&, int&, int);
-	bool validplacement(int&, int&, int&,bool&);
-	void resettonormal();
-	int getshipsiz(int&, int&, int&, int&);
+	bool validplacement(int&, int&, int&, bool&, std::vector<std::vector<bool>>&);
+	void resettonormal(Draw&);
+	int getshipsiz(int&, int&, int&, int&, int&, Draw&);
+	void test(Draw&);
+	void shipsleftreset(Draw&);
+	void change(int&, int, bool&, Draw&);
 };
 
 /*

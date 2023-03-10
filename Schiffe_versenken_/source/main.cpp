@@ -8,18 +8,15 @@
 #include "headers\Draw.h"
 #include "headers\player.h"
 #include "headers\highscore.h"
+#include "headers\Compare.h"
 using namespace std;
 typedef long long ll;
-//namespace std{
-//	void printr(const char* text) {
-//		std::string temp = text;
-//		std::reverse(temp.begin(), temp.end());
-//		std::cout << temp << std::endl;
-//	}
-//}
+
 int main() {
+	//std::mt19937_64 random_engine(std::chrono::system_clock::now().time_since_epoch().count());
+	//srand(static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count()));
 	Draw drawer;
-	Player player;
+	//Player player;
 	//Computer computer;
 	//Highscore highscore;
 	//map.mapsetter();
@@ -31,22 +28,25 @@ int main() {
 	bool windowopen = true;
 	string auswahl_temp = "-";
 	int auswahl = 0;
+	cout << "hallo welt11";
+	cin >> auswahl_temp;
+	
 	while (windowopen) {
-		player.resettonormal(drawer);
+		//player.resettonormal(drawer);
 		drawer.wahlget(auswahl, auswahl_temp, 1);
 		switch (auswahl)
 		{
 		case 1:
-			drawer.drawPvP(hConsole, drawer, player);
+			drawer.drawPvP(hConsole, drawer);
 			break;
 		case 2:
-			drawer.drawPv(hConsole, drawer, player);
+			drawer.drawPv(hConsole, drawer);
 			break;
 		case 3:
-			drawer.drawPvC(hConsole, drawer, player);
+			drawer.drawPvC(hConsole, drawer);
 			break;
 		case 4:
-			drawer.drawCvC(hConsole, drawer, player);
+			drawer.drawCvC(hConsole, drawer);
 			break;
 		default:
 			cout << "okay dann tschau";
@@ -56,9 +56,6 @@ int main() {
 	}
 	return 0;
 }
-
-//void Map::mapsetter() {
-//
 //	
 //	mapp = {
 //	   "Player 1:                                                    ",

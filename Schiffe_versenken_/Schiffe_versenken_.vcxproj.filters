@@ -30,6 +30,9 @@
     <ClCompile Include="source\highscore.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="source\Compare.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\headers\Draw.h">
@@ -47,5 +50,11 @@
     <ClInclude Include="source\headers\highscore.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="source\headers\Compare.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="source\score.txt" />
   </ItemGroup>
 </Project>

@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Compare.cpp" />
     <ClCompile Include="source\computer.cpp" />
     <ClCompile Include="source\Draw.cpp" />
     <ClCompile Include="source\highscore.cpp" />
@@ -154,11 +155,15 @@
     <ClCompile Include="source\player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\headers\Compare.h" />
     <ClInclude Include="source\headers\computer.h" />
     <ClInclude Include="source\headers\Draw.h" />
     <ClInclude Include="source\headers\global.h" />
     <ClInclude Include="source\headers\highscore.h" />
     <ClInclude Include="source\headers\player.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="source\score.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

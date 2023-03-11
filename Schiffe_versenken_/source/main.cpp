@@ -32,6 +32,10 @@ int main() {
 	//#endif
 
 
+
+	// min size damit es funktioniert 170
+
+
 	bool windowopen = true;
 	string auswahl_temp = "";
 	int auswahl = 0;

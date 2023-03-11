@@ -10,7 +10,7 @@ void Draw::drawMap(HANDLE& console, int x, vector<string>& map, bool mapp2_true)
 	pos.X = x;
 	DWORD bytesWritten;
 	DWORD bytesWritten2;
-	WORD z = 3;
+	WORD z = 7;
 	int height = map.size();
 	for (int y = 0; y < height; y++) {
 		std::wstring outputstr = s2ws(map[y], 1);
@@ -19,6 +19,7 @@ void Draw::drawMap(HANDLE& console, int x, vector<string>& map, bool mapp2_true)
 		//cout << map[y];
 
 		WriteConsoleOutputCharacter(console, outputstr.c_str(), outputstr.length() - 1, pos, &bytesWritten);
+		//WriteConsoleOutputAttribute(console, &z, outputstr.length() - 1, pos, &bytesWritten2);
 		if (y < 10)
 		{
 
@@ -36,8 +37,7 @@ void Draw::drawMap(HANDLE& console, int x, vector<string>& map, bool mapp2_true)
 
 
 			}
-			if (y < 5)
-			{
+			if (y < 5){
 				COORD c = coords3[y];
 				c.X += x;
 				if (!mapp2_true)
@@ -46,11 +46,7 @@ void Draw::drawMap(HANDLE& console, int x, vector<string>& map, bool mapp2_true)
 				}
 				WriteConsoleOutputAttribute(console, &colors3[y], 1, c, &bytesWritten2);
 			}
-
 		}
-
-
-		//WriteConsoleOutputAttribute(console,)
 	}
 	SetConsoleActiveScreenBuffer(console);
 }
@@ -61,9 +57,9 @@ void Draw::cursPosSet(HANDLE& console, int x, int y, COORD& cursorpos) {
 
 template<typename _T, typename __T>
 void Draw::setmakedrawmap(HANDLE& console,vector<string>& m2, string& x, _T& pc1, __T& pc2, bool z, bool u, int x2,bool mapp2_true) {
-	makemap(pc1.treffer, pc2.eigeneschiffe, charptrs, z, colors);
+	makemap(pc2.treffer, pc1.eigeneschiffe, charptrs, z, colors);
 	if (mapp2_true) {
-		makemap(pc2.treffer, pc1.eigeneschiffe, charptrs2, u, colors2);
+		makemap(pc1.treffer, pc2.eigeneschiffe, charptrs2, u, colors2);
 	}
 	setmap(console, mappp, mapp, m2, mapp3, x);
 
@@ -103,14 +99,10 @@ void Draw::drawPvP(HANDLE& console, Draw& drawer) {
 	game_end = false;
 	array<Player, 2> players;
 	COORD cursorPos = { 0,0 };
-	//Compare cp;
 	int zaehler = 0;
 	int wahlR = 0;
 	int wahlS = 0;
 	string wahl_temp = "0";
-	//bool hit_current_zug = 0;
-	//player.placeships(drawer);
-	//system("cls");
 	int n = 0;
 	int m = 1;
 	for (int i = 0; i < 2; i++)
@@ -131,41 +123,27 @@ void Draw::drawPvP(HANDLE& console, Draw& drawer) {
 			m = 0;
 			n = 1;
 		}
-
-		makemap(players[m].treffer, players[n].eigeneschiffe, charptrs, 1, colors);
-		makemap(players[n].treffer, players[m].eigeneschiffe, charptrs2, 0, colors2);
-		setmap(console, mappp, mapp, mapp2, mapp3, nthing);
-		drawMap(console, 0, mappp,1);
 		do {
-			cursorPos.X = 24; cursorPos.Y = 25;
-			SetConsoleCursorPosition(console, cursorPos);
-			setmap(console, mappp, mapp, mapp2, mapp3, temp);
-			drawMap(console, 0, mappp,1);
+			setmakedrawmap(console, mapp2, temp, players[n], players[m], 1, 0, 0, 1);
+			cursPosSet(console, 24, 25, cursorPos);
 			wahlget(wahlR, wahl_temp, 0);
-			SetConsoleCursorPosition(console, cursorPos);
-			setmap(console, mappp, mapp, mapp2, mapp3, temp2);
-			drawMap(console, 0, mappp,1);
-			SetConsoleCursorPosition(console, cursorPos);
+			setmakedrawmap(console, mapp2, temp2, players[n], players[m], 1, 0, 0, 1);
+			cursPosSet(console, 24, 25, cursorPos);
 			wahlget(wahlS, wahl_temp, 2);
-			//cout << wahlS;
-		} while (!players[m].validmove(wahlR, wahlS, players[m].treffer));
-		//players[m].movemaker(wahlR, wahlS, zaehler % 2, drawer);
-		//cper.movemaker(wahlR,wahlS,drawer,players[m],players[n]);
-		players[m].treffer[wahlR][wahlS] = 1;
-		makemap(players[n].treffer, players[m].eigeneschiffe, charptrs, 1, colors);
-		makemap(players[m].treffer, players[n].eigeneschiffe, charptrs2, 0, colors2);
-		setmap(console, mappp, mapp, mapp2, mapp3, nthing);
-		drawMap(console, 0, mappp,1);
+			cursPosSet(console, 24, 25, cursorPos);
+		} while (!players[n].validmove(wahlR, wahlS, players[n].treffer));
+		players[n].treffer[wahlR][wahlS] = 1;
+		setmakedrawmap(console, mapp2, temp2, players[n], players[m], 1, 0, 0, 1);
 		cursorPos.X = 0; cursorPos.Y = 25;
 		SetConsoleCursorPosition(console, cursorPos);
 		system("pause");
 		cursorPos.X = 24; cursorPos.Y = 25;
 		SetConsoleCursorPosition(console, cursorPos);
 
-		if (players[m].treffer[wahlR][wahlS] == 1 && players[n].eigeneschiffe[wahlR][wahlS] == 1) {
+		if (players[n].treffer[wahlR][wahlS] == 1 && players[m].eigeneschiffe[wahlR][wahlS] == 1) {
 			//hit_current_zug = 1;
-			players[m].trefferuebrig--;
-			if (players[m].trefferuebrig == 0) {
+			players[n].trefferuebrig--;
+			if (players[n].trefferuebrig == 0) {
 				game_end = true;
 			}
 		}
@@ -214,8 +192,6 @@ void Draw::drawPv(HANDLE& console, Draw& drawer) {
 			setmakedrawmap(console, emptyvec, temp, pc, pc, 1, 0, 0, 0);
 			cursPosSet(console, 24, 25, cursorPos);
 			wahlget(wahlR, wahl_temp, 0);
-			//setmap(console, mappp, mapp, emptyvec, mapp3, temp2);
-			//drawMap(console, 0, mappp);
 			setmakedrawmap(console, emptyvec, temp2, pc, pc, 1, 0, 0, 0);
 			cursPosSet(console, 24, 25, cursorPos);
 			wahlget(wahlS, wahl_temp, 2);

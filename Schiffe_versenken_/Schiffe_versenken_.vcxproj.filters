@@ -33,6 +33,9 @@
     <ClCompile Include="source\Compare.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="source\might_add_later.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\headers\Draw.h">

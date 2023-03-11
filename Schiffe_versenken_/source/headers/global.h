@@ -7,15 +7,13 @@
 #include <string>
 #include <random>
 #include <fstream>
-#include <Windows.h>
 
-//#include "global.h"
-//#include "computer.h"
-//#include "Draw.h"
-//#include "player.h"
-//#include "highscore.h"
-//#include "Compare.h"
-//std::vector<bool> int64 = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+//#if defined(_WIN32) || defined(_WIN64) 
+#include <Windows.h>
+/*#else
+#include <ncurses.h>
+#endif // defined(_WIN32) || defined(_WIN64) */
+
 
 
 constexpr const int sizefield = 10;
@@ -24,6 +22,11 @@ constexpr const char destroyed = 'x'; // only for Pv und CvC
 constexpr const char miss = 'o';
 constexpr const char unused = '~';
 constexpr const char ship = '#';
+
+constexpr const WORD hitc = 4;
+constexpr const WORD missedc = 6;
+constexpr const WORD unusedc = 3;
+constexpr const WORD shipc = 2;
 
 std::wstring s2ws(const std::string&, bool);
 int stoii(std::string&, int);

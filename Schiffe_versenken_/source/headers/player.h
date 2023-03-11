@@ -75,11 +75,13 @@ public:
 	{0,0,0,0,0,0,0,0,0,0},
 	};
 
-	void placeships(Draw&);
+	void placeships(Draw&,HANDLE&);
 	void shipmanager();
 	//void movemaker(int&, int&, int, Draw&);
 	//void hitmanager(int&, int&, int, Draw&);
-	bool validmove(int&, int&);
+	template<typename _T, typename __T>
+	void makemove(Draw&, int&, int&, HANDLE& console, _T p1, __T p2, std::string&, std::string&, std::vector<std::string>&);
+	bool validmove(int&, int&,std::vector<std::vector<bool>>&);
 	bool validplacement(int&, int&, int&, bool&, std::vector<std::vector<bool>>&);
 	void resettonormal(Draw&);
 	int getshipsiz(int&, int&, int&, int&, Draw&);

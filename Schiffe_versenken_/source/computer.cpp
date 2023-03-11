@@ -1,6 +1,6 @@
 #include "headers\computer.h"
 #define valid(v1,x,y) (((v1)[(x)][(y)] == 0) ? 1 : 0)
-void Computer::placeships(Draw& drawer) {
+void Computer::placeships(Draw& drawer,HANDLE& console) {
 	int wahlR = 0;
 	int wahlS = 0;
 	int wahl[10] = { 1,1,1,1,2,2,2,3,3,4 };
@@ -8,32 +8,23 @@ void Computer::placeships(Draw& drawer) {
 	std::string waiter;
 	srand(std::chrono::system_clock::now().time_since_epoch().count());
 	//std::mt19937_64 randomengine(std::chrono::system_clock::now().time_since_epoch().count());
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 11; i++) {
 		is_horizontal = (rand() % 2 == 0);
 		do {
 			wahlR = rand() % 10;
-			std::cout << wahlR;
+			//std::cout << wahlR;
 			wahlS = rand() % 10;
-			std::cout << wahlS;
+			//std::cout << wahlS;
 		} while (!(validplacement(wahlR, wahlS, wahl[i], is_horizontal, eigeneschiffe)));
 		if (is_horizontal) {
-			placeem(wahlR, wahlS, wahl[i], 1,eigeneschiffe);
+			placeem(wahlR, wahlS, 1, wahl[i], eigeneschiffe);
 		}
 		else {
-			placeem(wahlR, wahlS, 1, wahl[i],eigeneschiffe);
+			placeem(wahlR, wahlS, wahl[i], 1, eigeneschiffe);
 		}
 
 	}
-	std::cout << std::endl;
-	for (int k = 0; k < 10; k++)
-	{
-		for (int j = 0; j < 10; j++)
-		{
-			std::cout << eigeneschiffe[k][j] << ", ";
-		}
-		std::cout << std::endl;
-	}
-	std::cin >> waiter;
+	trefferuebrig = 20;
 }
 
 //void Computer::movemaker(int& x,int& y,int,Draw& drawer) {

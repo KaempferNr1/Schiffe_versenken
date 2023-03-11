@@ -1,53 +1,47 @@
 #include "headers\player.h"
 #define valid(v1,x,y) (((v1)[(x)][(y)] == 0) ? 1 : 0)
 using namespace std;
-void Player::placeships(Draw& drawer) {
+void Player::placeships(Draw& drawer, HANDLE& console) {
 	bool is_horizontal = 0;
 	string temp = "";
 	int wahlS = 0, wahlR = 0, wahl = 0;
-	
-		system("cls");
-		for (int k = 0; k < 10; k++) {
-			cout << "soll das schiff horizontal(1) oder vertikal(0) sein?";
-			cin >> temp;
-			is_horizontal = stoii((temp), 48);
-			wahl = getshipsiz(shiff1left1, shiff2left1, shiff3left1, shiff4left1, drawer);
+	COORD cursorPos = { 0,0 };
 
-			cout << "wo soll das schiff platziert werden(oberster/linkster Ort vom Schiff)\n zuerst reihe dann spalte und mit enter trennen\n";
-			do {
-				cout << "W\x84hlen sie die Reihe ";
-				drawer.wahlget(wahlR, temp, 2);
-				//cout << wahlR;
-				cout << "W\x84hlen sie die Spalte ";
-				drawer.wahlget(wahlS, temp, 2);
-				//cout << wahlS;
-			} while (!validplacement(wahlR, wahlS, wahl, is_horizontal,eigeneschiffe ));
-			//if (is_horizontal) {
-			//	for (int j = 0; j < wahl; j++) {
-			//		(i == 0) ? (ships1[wahlR][wahlS+j] = 1) : (ships2[wahlR][wahlS+j] = 1);
-			//	}
-			//}
-			//else {
-			//	for (int j = 0; j < wahl; j++) {
-			//		(i == 0) ? (ships1[wahlR+j][wahlS] = 1) : (ships2[wahlR+j][wahlS] = 1);
-			//	}
-			//}
-			if (is_horizontal)
-			{
-				placeem(wahlR, wahlS, wahl, 1, eigeneschiffe);
-			}
-			else {
-				placeem(wahlR, wahlS, 1, wahl,eigeneschiffe);
-			}
-			//(placeem(wahlR, wahlS, ((is_horizontal) ? wahl : 1), ((is_horizontal) ? 1 : wahl));
+	//system("cls");
+	for (int k = 0; k < 10; k++) {
+		cursorPos.X = 0; cursorPos.Y = 0;
+		SetConsoleCursorPosition(console, cursorPos);
+		drawer.makemap(treffer, eigeneschiffe, drawer.charptrs, 1 ,drawer.colors);
+		drawer.setmap(console, drawer.mappp, drawer.mapp, drawer.mapp3, drawer.emptyvec, drawer.nthing);
+		drawer.drawMap(console, 50, drawer.mappp,0);
+		cout << "soll das schiff horizontal(1) oder vertikal(0) sein?";
+		cin >> temp;
+		is_horizontal = stoii((temp), 48);
+		wahl = getshipsiz(shiff1left1, shiff2left1, shiff3left1, shiff4left1, drawer);
+
+		cout << "wo soll das schiff platziert werden\n(oberster/linkster Ort vom Schiff)\n zuerst reihe dann spalte und mit enter trennen\n";
+		do {
+			cout << "W\x84hlen sie die Reihe ";
+			drawer.wahlget(wahlR, temp, 2);
+			//cout << wahlR;
+			cout << "W\x84hlen sie die Spalte ";
+			drawer.wahlget(wahlS, temp, 2);
+			//cout << wahlS;
+		} while (!validplacement(wahlR, wahlS, wahl, is_horizontal, eigeneschiffe));
+		if (is_horizontal)
+		{
+			placeem(wahlR, wahlS, 1, wahl, eigeneschiffe);
 		}
-	system("cls");
-	shipsleftreset(drawer);
+		else {
+			placeem(wahlR, wahlS, wahl, 1, eigeneschiffe);
+		}
+	}
+	 shipsleftreset(drawer);
 }
-void Player::placeem(int& x, int& y, int j, int z, std::vector<std::vector<bool>>&ships) {
+void Player::placeem(int& y, int& x, int j, int z, std::vector<std::vector<bool>>& ships) {
 	for (int o = 0; o < j; o++) {
 		for (int k = 0; k < z; k++) {
-			ships[x + o][y + k] = 1;
+			ships[y + o][x + k] = 1;
 		}
 	}
 }
@@ -157,30 +151,32 @@ void Player::shipmanager() {
 //
 //}
 
-bool Player::validmove(int& x, int& y){
+bool Player::validmove(int& x, int& y, vector<vector<bool>>& ships) {
 	if (!((x >= 0 && x <= 9) && (y >= 0 && y <= 9)))
 	{
 		return false;
 	}
-	bool returnval = valid(treffer, x, y) ;
+	bool returnval = valid(ships, x, y);
 	return returnval;
 }
-bool Player::validplacement(int& x, int& y, int& leng, bool& is_horizontal, vector<vector<bool>>& shipss) {
+bool Player::validplacement(int& y, int& x, int& leng, bool& is_horizontal, vector<vector<bool>>& shipss) {
 	bool checker = 1;
+	int z = 0;
+	int t = 0;
 	if (is_horizontal) {
-		for (int i = 0; (i < leng) && checker; i++) {
-			if (!((x + i >= 0 && x + i <= 9) && (y >= 0 && y <= 9))) {
-				return false;
-			}
-			checker = valid(shipss, x + i, y);
-		}
+		t = leng;
+		z = 1;
 	}
 	else {
-		for (int i = 0; (i < leng) && checker; i++) {
-			if (!((x >= 0 && x <= 9) && (y + i >= 0 && y + i <= 9))) {
+		t = 1;
+		z = leng;
+	}
+	for (int i = 0; i < z && checker; i++) {
+		for (int k = 0; k < t && checker; k++) {
+			if (!((y + i >= 0 && y + i <= 9) && (x + k >= 0 && x + k <= 9))) {
 				return false;
 			}
-			checker = valid(shipss, x, y + i);
+			checker = valid(shipss, y+i, x+k);
 		}
 	}
 	return checker;
@@ -188,12 +184,12 @@ bool Player::validplacement(int& x, int& y, int& leng, bool& is_horizontal, vect
 
 void Player::resettonormal(Draw& drawer) {
 	shipsleftreset(drawer);
-	for (int i = 0; i < sizefield; i++) {
-		for (int k = 0; k < sizefield; k++) {
-			drawer.charptrs[i][k][0] = unused;
-			drawer.charptrs2[i][k][0] = unused;
-		}
-	}
+	//for (int i = 0; i < sizefield; i++) {
+	//	for (int k = 0; k < sizefield; k++) {
+	//		drawer.charptrs[i][k][0] = unused;
+	//		drawer.charptrs2[i][k][0] = unused;
+	//	}
+	//}
 
 }
 void Player::test(Draw& drawer) {
@@ -204,10 +200,10 @@ void Player::test(Draw& drawer) {
 }
 
 void Player::shipsleftreset(Draw& drawer) {
-	shiff1left1 = 4; 
-	shiff2left1 = 3; 
-	shiff3left1 = 2; 
-	shiff4left1 = 1; 
+	shiff1left1 = 4;
+	shiff2left1 = 3;
+	shiff3left1 = 2;
+	shiff4left1 = 1;
 	*drawer.charptrs3[3][0] = '4';
 	*drawer.charptrs3[2][0] = '3';
 	*drawer.charptrs3[1][0] = '2';
@@ -216,5 +212,28 @@ void Player::shipsleftreset(Draw& drawer) {
 	*drawer.charptrs3[2][1] = '3';
 	*drawer.charptrs3[1][1] = '2';
 	*drawer.charptrs3[0][1] = '1';
-					 
+	for (int i = 0; i < sizefield; i++) {
+		for (int k = 0; k < sizefield; k++) {
+			drawer.charptrs[i][k][0] = unused;
+			drawer.charptrs2[i][k][0] = unused;
+		}
+	}
+}
+
+
+
+template<typename _T, typename __T>
+void Player::makemove(Draw& drawer, int& y, int& x, HANDLE& console, _T p1, __T p2, std::string& temp, string& temp2, std::vector<std::string>& m2) {
+	COORD cursorPos = { 0,0 };
+	string wahl_temp;
+	do {
+		drawer.setmakedrawmap(console, drawer.mappp, drawer.mapp, m2, drawer.mapp3, temp, p1, p2, 1, 0, 0);
+		drawer.cursPosSet(console, 0, 25, cursorPos);
+		drawer.wahlget(y, wahl_temp, 0);
+		drawer.setmakedrawmap(console, drawer.mappp, drawer.mapp, m2, drawer.mapp3, temp2, p1, p2, 1, 0, 0);
+		drawer.cursPosSet(console, 0, 25, cursorPos);
+		drawer.wahlget(x, wahl_temp, 2);
+		drawer.cursPosSet(console, 0, 25, cursorPos);
+	} while (!validmove(y, x, p1.treffer));
+	p1.treffer[y][x] = 1;
 }

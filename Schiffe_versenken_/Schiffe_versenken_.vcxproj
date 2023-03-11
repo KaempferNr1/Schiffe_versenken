@@ -152,6 +152,7 @@
     <ClCompile Include="source\Draw.cpp" />
     <ClCompile Include="source\highscore.cpp" />
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\might_add_later.cpp" />
     <ClCompile Include="source\player.cpp" />
   </ItemGroup>
   <ItemGroup>

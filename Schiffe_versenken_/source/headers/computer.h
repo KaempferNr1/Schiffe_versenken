@@ -38,6 +38,11 @@ public:
 	{0,0,0,0,0,0,0,0,0,0},
 	};
 	int trefferuebrig = 20;
+//#if defined(_WIN32) || defined(_WIN64)
+	void placeships(Draw&, HANDLE&);
+/*#else
 	void placeships(Draw&);
+#endif // */
+
 	//void movemaker(int&, int&, int, Draw&);
 };

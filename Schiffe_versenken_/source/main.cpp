@@ -12,6 +12,8 @@
 using namespace std;
 typedef long long ll;
 
+
+
 int main() {
 	//std::mt19937_64 random_engine(std::chrono::system_clock::now().time_since_epoch().count());
 	//srand(static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count()));
@@ -20,33 +22,38 @@ int main() {
 	//Computer computer;
 	//Highscore highscore;
 	//map.mapsetter();
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	//#if defined(_WIN32) || defined(_WIN64)
+	HANDLE hconsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO cursorInfo;
-	GetConsoleCursorInfo(hConsole, &cursorInfo);
+	GetConsoleCursorInfo(hconsole, &cursorInfo);
 	cursorInfo.bVisible = false;
-	SetConsoleCursorInfo(hConsole, &cursorInfo);
+	SetConsoleCursorInfo(hconsole, &cursorInfo);
+	SetConsoleActiveScreenBuffer(hconsole);
+	//#endif
+
+
 	bool windowopen = true;
-	string auswahl_temp = "-";
+	string auswahl_temp = "";
 	int auswahl = 0;
-	cout << "hallo welt11";
-	cin >> auswahl_temp;
-	
+	//cout << "hallo welt11";
+	//cin >> auswahl_temp;
+	//#if defined(_WIN32) || defined(_WIN64)
 	while (windowopen) {
 		//player.resettonormal(drawer);
 		drawer.wahlget(auswahl, auswahl_temp, 1);
 		switch (auswahl)
 		{
 		case 1:
-			drawer.drawPvP(hConsole, drawer);
+			drawer.drawPvP(hconsole,drawer);
 			break;
 		case 2:
-			drawer.drawPv(hConsole, drawer);
+			drawer.drawPv(hconsole, drawer);
 			break;
 		case 3:
-			drawer.drawPvC(hConsole, drawer);
+			drawer.drawPvC(hconsole, drawer);
 			break;
 		case 4:
-			drawer.drawCvC(hConsole, drawer);
+			drawer.drawCvC(hconsole, drawer);
 			break;
 		default:
 			cout << "okay dann tschau";
@@ -54,8 +61,26 @@ int main() {
 			break;
 		}
 	}
+	
 	return 0;
 }
+void cursorInvis(HANDLE& console){
+	CONSOLE_CURSOR_INFO cursorInfo;
+	console = GetStdHandle(STD_OUTPUT_HANDLE);
+	GetConsoleCursorInfo(console, &cursorInfo);
+	cursorInfo.bVisible = false;
+	SetConsoleCursorInfo(console, &cursorInfo);
+	SetConsoleActiveScreenBuffer(console);
+}
+void cursorVis(HANDLE& console) {
+	CONSOLE_CURSOR_INFO cursorInfo;
+	console = GetStdHandle(STD_OUTPUT_HANDLE);
+	GetConsoleCursorInfo(console, &cursorInfo);
+	cursorInfo.bVisible = true;
+	SetConsoleCursorInfo(console, &cursorInfo);
+	SetConsoleActiveScreenBuffer(console);
+}
+
 //	
 //	mapp = {
 //	   "Player 1:                                                    ",

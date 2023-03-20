@@ -1,4 +1,4 @@
-//for main.cpp
+//for main.cpp hab ich gemacht
 /*#else
 	while (windowopen) {
 		//player.resettonormal(drawer);
@@ -24,7 +24,7 @@
 		}
 }
 	#endif*/
-//for draw.h
+//for draw.h hab hier tatsächlich auch die handles rausgemacht
 /*#else
 void drawMap(int, std::vector<std::string>&);
 void drawPvP(Draw&);

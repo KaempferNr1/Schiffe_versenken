@@ -16,11 +16,6 @@ public:
 		}
 		fout.close();
 		fin.close();	
-
-	
-
-		
-
 	}
 	// wenn noch zeit dann mach ich nen timer der zeigt wieviel der  letzte zug gedauert hat
 };

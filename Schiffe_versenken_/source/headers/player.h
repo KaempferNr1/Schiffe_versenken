@@ -6,9 +6,9 @@
 //#include <random>
 #include "global.h"
 #include "Draw.h"
-
-class Player
-{
+#include "computer.h"
+#include "Player1.h"
+class Player : public Player1{
 private:
 	std::vector<std::vector<bool>> eigeneschiffe = {
 		{0,0,0,0,0,0,0,0,0,0},
@@ -27,39 +27,10 @@ private:
 	int shiff2left1 = 3;
 	int shiff3left1 = 2;
 	int shiff4left1 = 1;
-
-	//std::vector<std::vector<bool>> ships2 = {
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//};
-	//std::vector<std::vector<bool>> ships1forP2 = {
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//};
-	//int numbershipleft2 = 10;
-	//int shiff1left2 = 4;
-	//int shiff2left2 = 3;
-	//int shiff3left2 = 2;
-	//int shiff4left2 = 1;
-	//int numberhitsleft2 = 20;
 	friend class Draw;
 	friend class Compare;
+
+
 public:
 	int trefferuebrig = 20;
 	std::vector<std::vector<bool>> treffer = {
@@ -74,23 +45,9 @@ public:
 	{0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0},
 	};
-
-	void placeships(Draw&,HANDLE&);
-	void shipmanager();
+	void placeships(Draw&, HANDLE&);
 	//void movemaker(int&, int&, int, Draw&);
 	//void hitmanager(int&, int&, int, Draw&);
-	template<typename _T, typename __T>
-	void makemove(Draw&, int&, int&, HANDLE& console, _T p1, __T p2, std::string&, std::string&, std::vector<std::string>&);
-	bool validmove(int&, int&,std::vector<std::vector<bool>>&);
-	bool validplacement(int&, int&, int&, bool&, std::vector<std::vector<bool>>&);
-	void resettonormal(Draw&);
-	int getshipsiz(int&, int&, int&, int&, Draw&);
-	void test(Draw&);
-	void shipsleftreset(Draw&);
-	void change(int&, int, bool&, Draw&);
-	void placeem(int&, int&, int, int, std::vector<std::vector<bool>>&);
-	bool gameover(Draw&, bool&);
-	//void makemap(std::vector<std::vector<bool>>&, std::vector<std::vector<bool>>&, std::vector<std::vector<char*>>&, bool);
 };
 
 /*

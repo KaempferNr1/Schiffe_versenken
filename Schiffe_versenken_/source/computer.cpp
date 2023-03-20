@@ -1,4 +1,5 @@
 #include "headers\computer.h"
+#include "headers\player.h"
 #define valid(v1,x,y) (((v1)[(x)][(y)] == 0) ? 1 : 0)
 void Computer::placeships(Draw& drawer,HANDLE& console) {
 	int wahlR = 0;
@@ -6,7 +7,6 @@ void Computer::placeships(Draw& drawer,HANDLE& console) {
 	int wahl[10] = { 1,1,1,1,2,2,2,3,3,4 };
 	bool is_horizontal = 0;
 	std::string waiter;
-	srand(std::chrono::system_clock::now().time_since_epoch().count());
 	//std::mt19937_64 randomengine(std::chrono::system_clock::now().time_since_epoch().count());
 	for (int i = 0; i < 11; i++) {
 		is_horizontal = (rand() % 2 == 0);
@@ -26,7 +26,6 @@ void Computer::placeships(Draw& drawer,HANDLE& console) {
 	}
 	trefferuebrig = 20;
 }
-
 //void Computer::movemaker(int& x,int& y,int,Draw& drawer) {
 //
 //}

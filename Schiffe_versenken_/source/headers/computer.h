@@ -1,7 +1,8 @@
 #pragma once
 #include "global.h"
-#include "player.h"
-class Computer : public Player{
+#include "Player1.h"
+#include "Draw.h"
+class Computer : public Player1 {
 private:
 	std::vector<std::vector<bool>> eigeneschiffe = {
 		{0,0,0,0,0,0,0,0,0,0},
@@ -38,11 +39,7 @@ public:
 	{0,0,0,0,0,0,0,0,0,0},
 	};
 	int trefferuebrig = 20;
-//#if defined(_WIN32) || defined(_WIN64)
 	void placeships(Draw&, HANDLE&);
-/*#else
-	void placeships(Draw&);
-#endif // */
-
+	void doAiStuff(); //sehr guter name für eine funktion ich weiß 
 	//void movemaker(int&, int&, int, Draw&);
 };

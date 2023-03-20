@@ -23,14 +23,14 @@ constexpr const char miss = 'o';
 constexpr const char unused = '~';
 constexpr const char ship = '#';
 
-constexpr const WORD hitc = 4;
-constexpr const WORD missedc = 6;
-constexpr const WORD unusedc = 3;
-constexpr const WORD shipc = 2;
+constexpr const WORD hitc = 4;		//
+constexpr const WORD missedc = 6;	//
+constexpr const WORD unusedc = 3;	//
+constexpr const WORD shipc = 2;		//
 
 std::wstring s2ws(const std::string&, bool);
 int stoii(std::string&, int);
-
+void smallToBig(std::string&);
 //constexpr const int ROWS = 20;
 //constexpr const int COLS = 40;
 //constexpr const int height = 50;

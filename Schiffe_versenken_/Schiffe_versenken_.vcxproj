@@ -150,12 +150,14 @@
     <ClCompile Include="source\Compare.cpp" />
     <ClCompile Include="source\computer.cpp" />
     <ClCompile Include="source\Draw.cpp" />
+    <ClCompile Include="source\Player1.cpp" />
     <ClCompile Include="source\highscore.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\might_add_later.cpp" />
     <ClCompile Include="source\player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\headers\Player1.h" />
     <ClInclude Include="source\headers\Compare.h" />
     <ClInclude Include="source\headers\computer.h" />
     <ClInclude Include="source\headers\Draw.h" />

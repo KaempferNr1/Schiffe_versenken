@@ -56,6 +56,8 @@ void Player::placeships(Draw& drawer, HANDLE& console) {
 		else {
 			placeem(wahlR, wahlS, wahl[i], 1, eigeneschiffe);
 		}
+		ships ship = { wahlR, wahlS, wahl[i], is_horizontal };
+		shipsplacement.push_back(ship); 
 
 	}
 	trefferuebrig = 20;

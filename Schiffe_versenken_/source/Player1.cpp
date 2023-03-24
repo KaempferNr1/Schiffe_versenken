@@ -11,8 +11,7 @@ void Player1::placeem(int& y, int& x, int j, int z, std::vector<std::vector<bool
 	}
 }
 
-bool Player1::gameover(Draw&, bool&)
-{
+bool Player1::gameover(Draw&, bool&){
 
 	return false;
 }
@@ -22,6 +21,7 @@ void Player1::change(int& s, int x, bool& check, Draw& drawer) {
 	s--;
 	check = false;
 	*drawer.charptrs3[x][0] = (s + 48);
+	
 }
 int Player1::getshipsiz(int& s1, int& s2, int& s3, int& s4, Draw& drawer) {
 	string temp;
@@ -171,6 +171,33 @@ void Player1::shipsleftreset(Draw& drawer) {
 	//	shiff4left1 = 1;
 }
 
+ships::ships(int yval, int xval, int len, bool is_horizontal){
+	//shipsplaces.reserve(len);
+	x = xval;
+	y = yval;
+	length = len;
+	horizontal = is_horizontal;
+	segsleft = len;
+	int z = 0;
+	int t = 0;
+	if (is_horizontal) {
+		z = 1;
+		t = len;
+	}
+	else {
+		z = len;
+		t = 1;
+	}
 
+	COORD res = { 0,0 };
+	for (int i = 0; i < len; i++){
+		for (int j = 0; j < z; j++) {
+			for (int k = 0; k < t; k++) {
+				res.Y = yval + j;
+				res.X= xval + k;
+				shipsplaces.push_back(res);
+			}
+		}
+	}
 
-
+}

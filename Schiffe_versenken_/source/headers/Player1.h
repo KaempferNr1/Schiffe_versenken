@@ -1,7 +1,23 @@
 #pragma once
 #include "global.h"
 #include "Draw.h"
-class Player1{
+
+class ships {
+private:
+	int x = 0;
+	int y = 0;
+	int length = 0;
+	bool horizontal = 0;
+	int segsleft = 0;
+	std::vector<COORD> shipsplaces;
+	friend class Draw;
+public:
+	bool destroyed = 0;
+	ships(int,int,int,bool);
+};
+
+
+class Player1 {
 public:
 	void shipmanager();
 	bool validmove(int&, int&, std::vector<std::vector<bool>>&);

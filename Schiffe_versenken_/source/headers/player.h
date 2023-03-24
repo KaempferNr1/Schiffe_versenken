@@ -32,6 +32,7 @@ private:
 
 
 public:
+	std::vector<ships> shipsplacement;
 	int trefferuebrig = 20;
 	std::vector<std::vector<bool>> treffer = {
 	{0,0,0,0,0,0,0,0,0,0},

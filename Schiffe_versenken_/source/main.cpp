@@ -13,15 +13,16 @@ using namespace std;
 void reset(Draw&);
 int main() {
 	system("pause");
+	system("cls");
 	Draw drawer;	
 	// min size damit es funktioniert 170
 	bool windowopen = true;
 	string auswahl_temp = "";
-	int auswahl =4 ;
+	int auswahl = 0;
 	srand(std::chrono::system_clock::now().time_since_epoch().count());
 	while (windowopen) {
 		reset(drawer);
-		//drawer.wahlget(auswahl, auswahl_temp, 1);
+		drawer.wahlget(auswahl, auswahl_temp, 1);
 		switch (auswahl)	{
 		case 1:
 			drawer.drawPvP(drawer);
@@ -34,6 +35,9 @@ int main() {
 			break;
 		case 4:
 			drawer.drawCvC(drawer);
+			break;
+		case 5:
+			drawer.mostlikelysq(drawer);
 			break;
 		default:
 			cout << "okay dann tschau";
@@ -56,6 +60,8 @@ void reset(Draw& drawer) {
 		for (int k = 0; k < sizefield; k++) {
 			drawer.charptrs[i][k][0] = unused;
 			drawer.charptrs2[i][k][0] = unused;
+			drawer.dest1[i][k] = 0;
+			drawer.dest2[i][k] = 0;
 		}
 	}
 }

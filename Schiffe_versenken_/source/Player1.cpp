@@ -6,7 +6,7 @@ using namespace std;
 void Player1::placeem(int& y, int& x, int j, int z, std::vector<std::vector<bool>>& ships) {
 	for (int o = 0; o < j; o++) {
 		for (int k = 0; k < z; k++) {
-			ships[y + o][x + k] = 1;
+			ships[(long long)y + o][(long long)x + k] = 1;
 		}
 	}
 }
@@ -32,7 +32,7 @@ int Player1::getshipsiz(int& s1, int& s2, int& s3, int& s4, Draw& drawer) {
 		cout << "welches schiff soll platziert werden?\n";
 
 		for (int k = 17; k < 21; k++) {
-			cout << s[(k - 17)] << ": ";
+			cout << s[((long long)k - 17)] << ": ";
 			for (int j = 0; j < 8; j++) {
 				cout << drawer.mapp3[k][j];
 			}
@@ -190,14 +190,14 @@ ships::ships(int yval, int xval, int len, bool is_horizontal){
 	}
 
 	COORD res = { 0,0 };
-	for (int i = 0; i < len; i++){
-		for (int j = 0; j < z; j++) {
-			for (int k = 0; k < t; k++) {
-				res.Y = yval + j;
-				res.X= xval + k;
-				shipsplaces.push_back(res);
-			}
+
+	for (int j = 0; j < z; j++) {
+		for (int k = 0; k < t; k++) {
+			res.Y = yval + j;
+			res.X= xval + k;
+			shipsplaces.push_back(res);
 		}
 	}
+	
 
 }

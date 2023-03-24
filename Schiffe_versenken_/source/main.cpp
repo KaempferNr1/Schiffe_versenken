@@ -48,6 +48,7 @@ int main() {
 	return 0;
 }
 void reset(Draw& drawer) {
+	drawer.zaehler = 0;
 	*drawer.charptrs3[3][0] = '4';
 	*drawer.charptrs3[2][0] = '3';
 	*drawer.charptrs3[1][0] = '2';

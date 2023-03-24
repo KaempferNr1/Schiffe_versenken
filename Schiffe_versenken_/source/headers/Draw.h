@@ -67,7 +67,7 @@ public:
 	void mostlikelysq(Draw&);
 
 	template<typename _T, typename __T>
-	void isdestroyed(Draw&, _T&, __T&);
+	void isdestroyed(Draw&, _T&, __T&, std::vector<std::vector<bool>>&);
 
 
 	template<typename _T, typename __T>

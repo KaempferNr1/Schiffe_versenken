@@ -27,7 +27,7 @@ constexpr const WORD hitc = 4;		//
 constexpr const WORD missedc = 6;	//
 constexpr const WORD unusedc = 3;	//
 constexpr const WORD shipc = 2;		//
-constexpr const WORD destroyedc = 4;//
+constexpr const WORD destroyedc = 245;//
 
 std::wstring s2ws(const std::string&, bool);
 int stoii(std::string&, int);

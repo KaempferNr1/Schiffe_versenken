@@ -22,11 +22,12 @@ private:
 		{0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0},
 	};
-	int numbershipleft1 = 10;
-	int shiff1left1 = 4;
-	int shiff2left1 = 3;
-	int shiff3left1 = 2;
-	int shiff4left1 = 1;
+	int schiffeuebrig = 10;
+	//int shiff1left1 = 4;
+	//int shiff2left1 = 3;
+	//int shiff3left1 = 2;
+	//int shiff4left1 = 1;
+	std::array<int, 4> shipsleft = {1,2,3,4};
 	friend class Draw;
 	friend class Compare;
 

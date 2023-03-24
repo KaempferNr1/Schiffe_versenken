@@ -18,10 +18,7 @@ private:
 	};
 
 	int schiffeuebrig = 10;
-	int shiff1left = 4;
-	int shiff2left = 3;
-	int shiff3left = 2;
-	int shiff4left = 1;
+	std::array<int, 4> shipsleft = { 1,2,3,4 };
 	friend class Draw;
 	friend class Compare;
 	//friend class Player;

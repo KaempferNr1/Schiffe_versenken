@@ -39,6 +39,9 @@
     <ClCompile Include="source\Player1.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="source\probabilityPc.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\headers\Draw.h">
@@ -60,6 +63,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="source\headers\Player1.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="source\headers\probabilityPc.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

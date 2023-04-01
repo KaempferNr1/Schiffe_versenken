@@ -6,8 +6,9 @@
 //#include <random>
 #include "global.h"
 #include "Draw.h"
-#include "computer.h"
+//#include "computer.h"
 #include "Player1.h"
+#include "probabilityPc.h"
 class Player : public Player1{
 private:
 	std::vector<std::vector<bool>> eigeneschiffe = {
@@ -22,19 +23,18 @@ private:
 		{0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0},
 	};
-	int schiffeuebrig = 10;
-	//int shiff1left1 = 4;
-	//int shiff2left1 = 3;
-	//int shiff3left1 = 2;
-	//int shiff4left1 = 1;
-	std::array<int, 4> shipsleft = {1,2,3,4};
+	int schiffeuebrig = 5;
+	std::array<int, 4> shipsleft = {1,2,1,1};
 	friend class Draw;
 	friend class Compare;
-
-
+	friend int main();
+	std::unique_ptr<probabilityPc> prob = nullptr;
 public:
+	int spaggethicode() {
+
+	}
 	std::vector<ships> shipsplacement;
-	int trefferuebrig = 20;
+	int trefferuebrig = 17;
 	std::vector<std::vector<bool>> treffer = {
 	{0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0},
@@ -48,6 +48,7 @@ public:
 	{0,0,0,0,0,0,0,0,0,0},
 	};
 	void placeships(Draw&, HANDLE&);
+	Player(Draw&);
 	//void movemaker(int&, int&, int, Draw&);
 	//void hitmanager(int&, int&, int, Draw&);
 };

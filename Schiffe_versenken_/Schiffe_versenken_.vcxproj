@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\probabilityPc.cpp" />
     <ClCompile Include="source\Compare.cpp" />
     <ClCompile Include="source\computer.cpp" />
     <ClCompile Include="source\Draw.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="source\player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\headers\probabilityPc.h" />
     <ClInclude Include="source\headers\Player1.h" />
     <ClInclude Include="source\headers\Compare.h" />
     <ClInclude Include="source\headers\computer.h" />

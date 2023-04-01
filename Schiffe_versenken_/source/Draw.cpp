@@ -1,11 +1,16 @@
 #include "headers/Draw.h"
 #include "headers/computer.h"
 #include "headers/player.h"
+#include "headers/probabilityPc.h"
 using namespace std;
 //#if defined(_WIN32) || defined(_WIN64) 
 //int currentsize = 0;
 //int lastsize = 0;
 void Draw::drawMap(int x, vector<string>& map, bool mapp2_true) { // x ist die verschiebung von der ganzen map nach rechts 
+	CONSOLE_CURSOR_INFO cursorInfo;
+	GetConsoleCursorInfo(console, &cursorInfo);
+	cursorInfo.bVisible = false;
+	SetConsoleCursorInfo(console, &cursorInfo);
 	CONSOLE_SCREEN_BUFFER_INFO screen;
 	GetConsoleScreenBufferInfo(console, &screen);
 	COORD pos = { 0, 0 };
@@ -16,20 +21,16 @@ void Draw::drawMap(int x, vector<string>& map, bool mapp2_true) { // x ist die v
 	DWORD bytesWritten3 = 0;
 	WORD z = 15;
 	int height =(int)map.size();
-	//if (currentsize != lastsize){
+	currentsize = screen.dwSize.X;
+	if (currentsize != lastsize){
 	//	cout << "bitte die fontsize vom Terminal ändern";
-	//	for (int i = 0; i < height; i++){
-	//		pos.Y = i;
-	//		for (int k = 0; k < map[i].size(); k++){
-	//			WriteConsoleOutputAttribute(console, &z, 1, pos, &bytesWritten3);
-	//		}
-	//	}
-	//}
+		system("color F");
+	}
 	for (int y = 0; y < height; y++) {
 		std::wstring outputstr = s2ws(map[y], 1); // hier mache ich aus dem string vom vektor<string> map am index y ein wide string. Wide strings sind strings aus 2 byte großen chars.
 		pos.Y = y;								  // hier sage ich, dass die coordinate pos 1 nach unten geht
 		pos.X = x;								  // das ist für die rechtsverschiebung
-		WriteConsoleOutputCharacter(console, outputstr.c_str(), outputstr.length() - 1, pos, &bytesWritten1); //hier beschreibe ich das terminal
+		WriteConsoleOutputCharacter(console, outputstr.c_str(), (DWORD)outputstr.length() - 1, pos, &bytesWritten1); //hier beschreibe ich das terminal
 		if (y < 10) { //
 			for (int i = 0; i < 10; i++) {
 				COORD copycord = coords[y][i];
@@ -52,7 +53,7 @@ void Draw::drawMap(int x, vector<string>& map, bool mapp2_true) { // x ist die v
 		}
 	}
 	SetConsoleActiveScreenBuffer(console);
-	//lastsize = currentsize;
+	lastsize = currentsize;
 }
 void Draw::cursPosSet(int x, int y) {
 	COORD cursorpos = { 0,0 };
@@ -78,6 +79,8 @@ void Draw::setmakedrawmap(vector<string>& m2, string& x, _T& p1, __T& p2, bool z
 	// mapp ist ein stueck der karte welche immer gezeigt werden muss
 	drawMap(x2, mappp, mapp2_true);    //x2 ist wie weit das ganze konstrukt nach rechts verschoben wird
 }
+int zahl = 0;
+
 
 template<typename _T, typename __T>
 int Draw::gameloop(Draw& drawer, _T& p1, __T& p2, bool z, bool x, bool y, bool c) {//der erste bool sagt ob man die schiffe in der linken map sehen kann
@@ -90,14 +93,19 @@ int Draw::gameloop(Draw& drawer, _T& p1, __T& p2, bool z, bool x, bool y, bool c
 	int wahlR = 0;
 	string wahl_temp;
 	if (c) { // wenn immer die gleiche map seien soll
-		if (zaehler % 2 == 0) { // is 0 wenn spieler 1 dran ist
+		if (zaehler % 2 == 0 ) { // is 0 wenn spieler 1 dran ist
 			do {
 				if (is_same<_T, Player>::value || !y) {
 					playermove(p1, p2, wahlR, wahlS, z, x, y);
 				}
 				else {
-					wahlR = rand() % 10;
-					wahlS = rand() % 10;
+					makemap(p1.treffer, p2.eigeneschiffe, charptrs, 1, colors, dest2);
+					for (int i = 0; i < 10; i++) {
+						for (int j = 0; j < 10; j++) {
+							p1.prob->map[i][j] = *charptrs[i][j];
+						}
+					}
+					p1.prob->select_next_guess(p1.treffer, wahlR, wahlS);
 				}
 			} while (!p1.validmove(wahlR, wahlS, p1.treffer));
 			p1.treffer[wahlR][wahlS] = 1;
@@ -105,24 +113,35 @@ int Draw::gameloop(Draw& drawer, _T& p1, __T& p2, bool z, bool x, bool y, bool c
 		else {
 			do {
 				if (is_same<__T, Player>::value || !y) {
-
 					playermove(p1, p2, wahlR, wahlS, z, x, y);
-
 				}
 				else {
-					wahlR = rand() % 10;
-					wahlS = rand() % 10;
+					makemap(p2.treffer, p1.eigeneschiffe, charptrs, 1, colors, dest1);
+					for (int i = 0; i < 10; i++) {
+						for (int j = 0; j < 10; j++) {
+							p2.prob->map[i][j] = *charptrs[i][j];
+						}
+					}
+					p2.prob->select_next_guess(p2.treffer, wahlR, wahlS);
+					
 				}
 			} while (!p2.validmove(wahlR, wahlS, p2.treffer));
 			p2.treffer[wahlR][wahlS] = 1;
 		}
+		isdestroyed(drawer, p1, p2, dest1);
+		isdestroyed(drawer, p2, p1, dest2);
+
+		setmakedrawmap(mapp2, nthing, p1, p2, z, x, 0, y);
+		for (int j = 0; j < 4; j++) {
+			*charptrs3[j][0] = p1.shipsleft[(long long)3 - j] + 48;
+			*charptrs3[j][1] = p2.shipsleft[(long long)3 - j] + 48;
+		}
+
 	}
 	else {
 		do {
 			if (is_same<_T, Player>::value || !y) {
-
 				playermove(p1, p2, wahlR, wahlS, z, x, y);
-
 			}
 			else {
 				wahlR = rand() % 10;
@@ -130,17 +149,24 @@ int Draw::gameloop(Draw& drawer, _T& p1, __T& p2, bool z, bool x, bool y, bool c
 			}
 		} while (!p1.validmove(wahlR, wahlS, p1.treffer));
 		p1.treffer[wahlR][wahlS] = 1;
-	}
-	isdestroyed(drawer, p1, p2,dest1);
-	isdestroyed(drawer, p2, p1,dest2);
-	for (int j = 0; j < 4; j++) {
-		*charptrs3[j][0] = p1.shipsleft[(long long)3 - j] + 48;
-		*charptrs3[j][1] = p2.shipsleft[(long long)3 - j] + 48;
+		if (zaehler % 2 == 0){
+			isdestroyed(drawer, p1, p2, dest1);
+			isdestroyed(drawer, p2, p1, dest2);
+		}
+		else{
+			isdestroyed(drawer, p1, p2, dest2);
+			isdestroyed(drawer, p2, p1, dest1);
+		}
+		for (int j = 0; j < 4; j++) {
+			*charptrs3[j][0] = p1.shipsleft[(long long)3 - j] + 48;
+			*charptrs3[j][1] = p2.shipsleft[(long long)3 - j] + 48;
+		}
 	}
 	if (is_same<_T, __T>::value && is_same<_T, Player>::value) {
 		setmakedrawmap(mapp2, temp2, p1, p2, 0, 0, 0, y);
 		cursPosSet(0, 25);
 		system("pause");
+		setmakedrawmap(mapp2, nthing, p1, p2, z, x, 0, y);
 	}
 	else {
 		setmakedrawmap(mapp2, nthing, p1, p2, z, x, 0, y);
@@ -160,6 +186,7 @@ int Draw::gameloop(Draw& drawer, _T& p1, __T& p2, bool z, bool x, bool y, bool c
 		zaehler = gamecheck(p1, p2, wahlR, wahlS);
 
 	}
+	zahl++;
 	return zaehler;
 }
 
@@ -181,82 +208,130 @@ int Draw::gamecheck(_T& p1, __T& p2, int& y, int& x) {
 	return zaehler;
 }
 void Draw::drawPvP(Draw& drawer) {
-	game_end = false;
-	array<Player, 2> players;
-	zaehler = 0;
+	zahl = 0;
 	int n = 0;
 	int m = 1;
+	zaehler = 0;
+	game_end = false;
+	//vector<Player> players;
+	array<Player, 2> players = { drawer,drawer };
+	//Player p1 = drawer;
+	//Player p2(drawer);
+	//players.push_back(p1);
+	//players.push_back(p2);
+	//vector<char>::iterator wvector;
+	//for (int i = 0; i < p2.prob->map.size(); i++){
+	//	for (wvector = p2.prob->map[i].begin(); wvector != p2.prob->map[i].end(); wvector++) {
+	//	}
+	//}
+
 	for (int i = 0; i < 2; i++) {
 		players[i].placeships(drawer, console);
 	}
+	//p1.placeships(drawer,console);
+	//p2.placeships(drawer,console);
 	while (!game_end) {
 		if (zaehler % 2 == 0) {
-			m = 1;
-			n = 0;
+			m = 1; n = 0;
+			//zaehler = gameloop(drawer, p1, p2, 1, 0, 1, 0);
 		}
 		else {
-			m = 0;
-			n = 1;
+			 m = 0; n = 1;
+			//zaehler = gameloop(drawer, p1, p2, 1, 0, 1, 0);
 		}
 		zaehler = gameloop(drawer, players[n], players[m], 1, 0, 1, 0);
 	}
 	system("pause");
-	players[0].resettonormal(drawer);
 }
 
 void Draw::drawPv(Draw& drawer) {
-	game_end = false;
-	Computer pc;
+	zahl = 0;
 	zaehler = 0;
+	game_end = false;
+	Computer pc(drawer);
 	pc.placeships(drawer, console);
-	mapp[0] = "Gegner Schiffe                                               ";
-	pc.trefferuebrig = 20;
-	int zahl = 0;
+	pc.trefferuebrig = 17;
+	mapp[0] =  "Gegner Schiffe                                               ";
 	while (!game_end) {
-		zaehler = gameloop(drawer, pc, pc, 1, 0, 0, 0);
+		zaehler = gameloop(drawer, pc, pc, 0, 0, 0, 0);
 		zahl++;
 	}
-	pc.resettonormal(drawer);
+	cursPosSet(0, 25);
 	mapp[0] = "Eigene Karte                                                 ";
+	system("pause");
 }
 
 void Draw::drawPvC(Draw& drawer) {
-	game_end = false;
-	Computer pc1;
-	Player p1;
+	zahl = 0;
 	zaehler = 0;
-
+	game_end = false;
+	Computer pc1(drawer);
+	Player p1(drawer);
 	pc1.placeships(drawer, console);
 	p1.placeships(drawer, console);
 	while (!game_end) {
-		zaehler = gameloop(drawer, p1, pc1, 1, 1, 1, 1);
+		zaehler = gameloop(drawer, p1, pc1, 1, 0, 1, 1);
 	}
-	system("pause");
 }
 
 void Draw::drawCvC(Draw& drawer) {
-	game_end = false;
-	array<Computer, 2> pcs;
-	int wahlR = 0;
-	int wahlS = 0;
-	string wahl_temp = "0";
-	int n = 0;
-	int m = 1;
-	for (int i = 0; i < 2; i++)
-	{
-		pcs[i].placeships(drawer, console);
+	string siztemp;
+	int siz = 0;
+	wahlget(siz, siztemp, 2);
+	pair<int, int> wins = { 0,0 };
+	vector<int> durchschnitt = vector<int>(siz,0);
+	double ds = 0.0;
+	double prevds = 0.0;
+	int hoechsteanzahl = INT_MIN;
+	int niedrigstzahl = INT_MAX;
+	int randtreffer1 = 0;
+	int randtreffer2 = 0;
+	long long bigzahl = 0;
+	for (int k = 0; k < siz; k++){
+		reset(drawer);
+		zahl = 0;
+		zaehler = 0;
+		game_end = false;
+		Computer pc1(drawer);
+		Computer pc2(drawer);
+		pc1.placeships(drawer, console);
+		pc2.placeships(drawer, console);
+		pc1.trefferuebrig = 17;
+		pc2.trefferuebrig = 17;
+		mapp[0] = "Computer 1                                                   ";
+		mapp2[0] = "Computer 2                                                   ";
+		while (!game_end) {
+			zaehler = gameloop(drawer, pc1, pc2, 1, 1, 1, 1);
+			ds++;
+			bigzahl++;
+		}
+		if (ds - prevds > hoechsteanzahl){
+			hoechsteanzahl = (int)ds - (int)prevds;
+		}
+		if (ds- prevds < niedrigstzahl){
+			niedrigstzahl = (int)ds - (int)prevds;
+		}
+		(zaehler % 2) ? wins.second++:wins.first++ ;
+		//mapp[0] = "Eigene Karte                                                ";
+		//mapp2[0] = "Gegner Karte                                                ";
+		cursPosSet(0, 25);
+		//system("pause");
+		randtreffer1 += pc1.prob->numberofrandhits;
+		randtreffer2 += pc2.prob->numberofrandhits;
+		prevds = ds;
 	}
-	pcs[0].trefferuebrig = 20;
-	pcs[1].trefferuebrig = 20;
-	mapp[0] = "Computer 1                                                   ";
-	mapp2[0] = "Computer 2                                                   ";
-	while (!game_end) {
-		zaehler = gameloop(drawer, pcs[0], pcs[1], 1, 1, 1, 1);
-	}
-	mapp[0] = "Eigene Karte                                                ";
-	mapp2[0] = "Gegner Karte                                                ";
-	cursPosSet(0, 25);
-	system("pause");
+	ds = ds / siz;
+	std::cout << "anzahl aller 'runden'" << bigzahl;
+	std::cout << "\nanzahl rand treffer pc1:" << randtreffer1;
+	std::cout << "\nanzahl rand treffer pc2:" << randtreffer2;
+	std::cout << "\ndie hoechste anzahl fuer ein spiel war:" << hoechsteanzahl / 2;
+	std::cout << "\ndie niedrigste anzahl fuer ein spiel war:" << niedrigstzahl / 2;
+	std::cout << "\nder durchschnitt fuer ein spiel war:" << ds / 2;
+	std::cout <<"\nsiege von PC 1:" << wins.first <<"\nsiege von Pc 2:"<< wins.second;
+	std::cout << "\nwahrscheinlichkeit vom sieg fuer PC 1:" << (double)wins.first / siz;
+	std::cout << "\nwahrscheinlichkeit vom sieg fuer PC 2:" << (double)wins.second / siz;
+
+	//system("pause");
 }
 
 void Draw::setmap(std::vector<std::string>& result, std::vector<std::string>& mp1, std::vector<std::string>& mp2, std::vector<std::string>& mp3, std::string& x) {
@@ -289,17 +364,17 @@ void Draw::setansig(string& x) {
 void Draw::wahlget(int& auswahl, string& as, int x) {
 	//system("cls");
 	if (x == 1) {
-		system("cls");
+		//system("cls");
 		for (size_t i = 0; i < moeglichkeiten.size(); i++) {
-			cout << "\t" << i + 1 << "\t" << moeglichkeiten[i];
+			std::cout << "\t" << i + 1 << "\t" << moeglichkeiten[i];
 		}
 	}
-	cin >> as;
+	getline(cin, as);
 	auswahl = (x == 1 || x == 2) ? stoii(as, 48) : stoii(as, 65);
 	return;
 }
 
-wstring s2ws(const string& s, bool isUtf8){
+wstring s2ws(const string& s, bool isUtf8){ //diesen code habe ich von stackoverflow kopiert also werde ich ihn nicht erklären
 	int len;
 	int slength = (int)s.length() + 1;
 	len = MultiByteToWideChar(isUtf8 ? CP_UTF8 : CP_ACP, 0, s.c_str(), slength, 0, 0);
@@ -309,21 +384,21 @@ wstring s2ws(const string& s, bool isUtf8){
 	return buf;
 }
 
-void Draw::makemap(vector<vector<bool>>& ships_see, vector<vector<bool>>& ships, vector<vector<char*>>& charptrs, bool z, vector<vector<WORD>>& colorss ,vector<vector<bool>>& destroyedvec) {
+void Draw::makemap(vector<vector<bool>>& hits, vector<vector<bool>>& ships, vector<vector<char*>>& charptrs, bool z, vector<vector<WORD>>& colorss ,vector<vector<bool>>& destroyedvec) {
 	for (int i = 0; i < sizefield; i++) {
 		for (int k = 0; k < sizefield; k++) {
 			if (destroyedvec[i][k]){
 				*charptrs[i][k] = destroyed;
 				colorss[i][k] = destroyedc;
-			}else if (ships_see[i][k] == 1 && ships[i][k] == 0) {
+			}else if (hits[i][k] == 1 && ships[i][k] == 0) {
 				*charptrs[i][k] = miss;
 				colorss[i][k] = missedc;
 			}
-			else if ((ships_see[i][k] == 0 && ships[i][k] == 1) && z) {
+			else if ((hits[i][k] == 0 && ships[i][k] == 1) && z) {
 				*charptrs[i][k] = ship;
 				colorss[i][k] = shipc;
 			}
-			else if (ships_see[i][k] == 1 && ships[i][k] == 1) {
+			else if (hits[i][k] == 1 && ships[i][k] == 1) {
 				*charptrs[i][k] = hit;
 				colorss[i][k] = hitc;
 			}
@@ -333,8 +408,6 @@ void Draw::makemap(vector<vector<bool>>& ships_see, vector<vector<bool>>& ships,
 			}
 		}
 	}
-
-
 }
 
 int stoii(string& a, int x) {
@@ -355,10 +428,16 @@ int stoii(string& a, int x) {
 template<typename _T, typename __T>
 void Draw::isdestroyed(Draw& drawer, _T& p1, __T& p2,vector<vector<bool>>& dest){
 	for (int integ = 0; integ < 4 ; integ++){
-		p1.shipsleft[3-integ] = integ+1;
+		p1.shipsleft[3-integ] = 1;
 	}
-	p1.schiffeuebrig = 10;
-	for (int i = 0; i < 10; i++) {
+	p1.shipsleft[1] = 2;
+	p1.schiffeuebrig = 5;
+	for (int r = 0; r < 10; r++){
+		for (int c = 0; c < 10; c++){
+			dest[r][c] = 0;
+		}
+	}
+	for (int i = 0; i < 5; i++) {
 		if (p1.shipsplacement[i].destroyed == 0) {
 			bool checker = 1;
 			for (int k = 0; k < p1.shipsplacement[i].length && checker; k++) {
@@ -372,7 +451,7 @@ void Draw::isdestroyed(Draw& drawer, _T& p1, __T& p2,vector<vector<bool>>& dest)
 			if (checker) {
 				p1.schiffeuebrig--;
 				p1.shipsplacement[i].destroyed = 1;
-				p1.shipsleft[p1.shipsplacement[i].length - 1] = p1.shipsleft[p1.shipsplacement[i].length - 1]-1;
+				p1.shipsleft[p1.shipsplacement[i].length - 2] = p1.shipsleft[p1.shipsplacement[i].length - 2]-1;
 				for (int j = 0; j < p1.shipsplacement[i].length; j++) {
 					dest[p1.shipsplacement[i].shipsplaces[j].Y][p1.shipsplacement[i].shipsplaces[j].X] = 1;
 				}
@@ -380,7 +459,10 @@ void Draw::isdestroyed(Draw& drawer, _T& p1, __T& p2,vector<vector<bool>>& dest)
 		}
 		else{
 			p1.schiffeuebrig--;
-			p1.shipsleft[p1.shipsplacement[i].length - 1]--;
+			p1.shipsleft[p1.shipsplacement[i].length - 2]--;
+			for (int j = 0; j < p1.shipsplacement[i].length; j++) {
+				dest[p1.shipsplacement[i].shipsplaces[j].Y][p1.shipsplacement[i].shipsplaces[j].X] = 1;
+			}
 		}
 	}
 }
@@ -395,6 +477,7 @@ void Draw::pcmove(Draw&, _T&, __T&, int&, int&){
 template<typename _T, typename __T>
 void Draw::playermove(_T& p1, __T& p2, int& wahlR, int& wahlS, bool x, bool y, bool z) {
 	string wahl_temp;
+	string wahl_temp2;
 	setmakedrawmap(mapp2, temp, p1, p2, x, y, 0, z);
 	cursPosSet(24, 25);
 	wahlget(wahlR, wahl_temp, 0);
@@ -484,12 +567,12 @@ Draw::Draw() {
 	   "                                ",
 	   "Anzahl Schiffe uebrig:          ",
 	   "                                ",
-	   "Player 1:       Player2:        ",
+	   "Player 1:        Player2:       ",
 	   "                                ",
-	   "#### : 1        #### : 1        ",
-	   "###  : 2        ###  : 2        ",
-	   "##   : 3        ##   : 3        ",
-	   "#    : 4        #    : 4        ",
+	   "##### : 1        ##### : 1      ",
+	   "####  : 1        ####  : 1      ",
+	   "###   : 2        ###   : 2      ",
+	   "##    : 1        ##    : 1      ",
 	   "                                ",
 	   "                                ",
 	   "                                ",
@@ -528,36 +611,36 @@ Draw::Draw() {
 	};
 	charptrs2.shrink_to_fit();
 	charptrs3 = {
-		{&mapp3[17][7],&mapp3[17][23]},
-		{&mapp3[18][7],&mapp3[18][23]},
-		{&mapp3[19][7],&mapp3[19][23]},
-		{&mapp3[20][7],&mapp3[20][23]}
+		{&mapp3[17][8],&mapp3[17][25]},
+		{&mapp3[18][8],&mapp3[18][25]},
+		{&mapp3[19][8],&mapp3[19][25]},
+		{&mapp3[20][8],&mapp3[20][25]}
 	};
 	charptrs3.shrink_to_fit();
 	coords = {
-	{{20,3},{24,3},{28,3},{32,3},{36,3},{40,3},{44,3},{48,3},{52,3},{56,3}},
-	{{20,5},{24,5},{28,5},{32,5},{36,5},{40,5},{44,5},{48,5},{52,5},{56,5}},
-	{{20,7},{24,7},{28,7},{32,7},{36,7},{40,7},{44,7},{48,7},{52,7},{56,7}},
-	{{20,9},{24,9},{28,9},{32,9},{36,9},{40,9},{44,9},{48,9},{52,9},{56,9}},
-	{{20,11},{24,11},{28,11},{32,11},{36,11},{40,11},{44,11},{48,11},{52,11},{56,11}},
-	{{20,13},{24,13},{28,13},{32,13},{36,13},{40,13},{44,13},{48,13},{52,13},{56,13}},
-	{{20,15},{24,15},{28,15},{32,15},{36,15},{40,15},{44,15},{48,15},{52,15},{56,15}},
-	{{20,17},{24,17},{28,17},{32,17},{36,17},{40,17},{44,17},{48,17},{52,17},{56,17}},
-	{{20,19},{24,19},{28,19},{32,19},{36,19},{40,19},{44,19},{48,19},{52,19},{56,19}},
-	{{20,21},{24,21},{28,21},{32,21},{36,21},{40,21},{44,21},{48,21},{52,21},{56,21}}
+		{{20,3},{24,3},{28,3},{32,3},{36,3},{40,3},{44,3},{48,3},{52,3},{56,3}},
+		{{20,5},{24,5},{28,5},{32,5},{36,5},{40,5},{44,5},{48,5},{52,5},{56,5}},
+		{{20,7},{24,7},{28,7},{32,7},{36,7},{40,7},{44,7},{48,7},{52,7},{56,7}},
+		{{20,9},{24,9},{28,9},{32,9},{36,9},{40,9},{44,9},{48,9},{52,9},{56,9}},
+		{{20,11},{24,11},{28,11},{32,11},{36,11},{40,11},{44,11},{48,11},{52,11},{56,11}},
+		{{20,13},{24,13},{28,13},{32,13},{36,13},{40,13},{44,13},{48,13},{52,13},{56,13}},
+		{{20,15},{24,15},{28,15},{32,15},{36,15},{40,15},{44,15},{48,15},{52,15},{56,15}},
+		{{20,17},{24,17},{28,17},{32,17},{36,17},{40,17},{44,17},{48,17},{52,17},{56,17}},
+		{{20,19},{24,19},{28,19},{32,19},{36,19},{40,19},{44,19},{48,19},{52,19},{56,19}},
+		{{20,21},{24,21},{28,21},{32,21},{36,21},{40,21},{44,21},{48,21},{52,21},{56,21}}
 	};
 	coords.shrink_to_fit();
 	coords2 = {
-	{{81,3},{85,3},{89,3},{93,3},{97,3},{101,3},{105,3},{109,3},{113,3},{117,3}},
-	{{81,5},{85,5},{89,5},{93,5},{97,5},{101,5},{105,5},{109,5},{113,5},{117,5}},
-	{{81,7},{85,7},{89,7},{93,7},{97,7},{101,7},{105,7},{109,7},{113,7},{117,7}},
-	{{81,9},{85,9},{89,9},{93,9},{97,9},{101,9},{105,9},{109,9},{113,9},{117,9}},
-	{{81,11},{85,11},{89,11},{93,11},{97,11},{101,11},{105,11},{109,11},{113,11},{117,11}},
-	{{81,13},{85,13},{89,13},{93,13},{97,13},{101,13},{105,13},{109,13},{113,13},{117,13}},
-	{{81,15},{85,15},{89,15},{93,15},{97,15},{101,15},{105,15},{109,15},{113,15},{117,15}},
-	{{81,17},{85,17},{89,17},{93,17},{97,17},{101,17},{105,17},{109,17},{113,17},{117,17}},
-	{{81,19},{85,19},{89,19},{93,19},{97,19},{101,19},{105,19},{109,19},{113,19},{117,19}},
-	{{81,21},{85,21},{89,21},{93,21},{97,21},{101,21},{105,21},{109,21},{113,21},{117,21}}
+		{{81,3},{85,3},{89,3},{93,3},{97,3},{101,3},{105,3},{109,3},{113,3},{117,3}},
+		{{81,5},{85,5},{89,5},{93,5},{97,5},{101,5},{105,5},{109,5},{113,5},{117,5}},
+		{{81,7},{85,7},{89,7},{93,7},{97,7},{101,7},{105,7},{109,7},{113,7},{117,7}},
+		{{81,9},{85,9},{89,9},{93,9},{97,9},{101,9},{105,9},{109,9},{113,9},{117,9}},
+		{{81,11},{85,11},{89,11},{93,11},{97,11},{101,11},{105,11},{109,11},{113,11},{117,11}},
+		{{81,13},{85,13},{89,13},{93,13},{97,13},{101,13},{105,13},{109,13},{113,13},{117,13}},
+		{{81,15},{85,15},{89,15},{93,15},{97,15},{101,15},{105,15},{109,15},{113,15},{117,15}},
+		{{81,17},{85,17},{89,17},{93,17},{97,17},{101,17},{105,17},{109,17},{113,17},{117,17}},
+		{{81,19},{85,19},{89,19},{93,19},{97,19},{101,19},{105,19},{109,19},{113,19},{117,19}},
+		{{81,21},{85,21},{89,21},{93,21},{97,21},{101,21},{105,21},{109,21},{113,21},{117,21}}
 	};
 	coords2.shrink_to_fit();
 	coords3 = { { 138 ,3},{138 ,5},{138 ,7},{138 ,9},{138, 11} };
@@ -568,15 +651,15 @@ Draw::Draw() {
 	cursorInfo.bVisible = false;
 	SetConsoleCursorInfo(console, &cursorInfo);
 	SetConsoleActiveScreenBuffer(console);
-	//CONSOLE_SCREEN_BUFFER_INFO screen;
-	//GetConsoleScreenBufferInfo(console, &screen);
+	CONSOLE_SCREEN_BUFFER_INFO screen;
+	GetConsoleScreenBufferInfo(console, &screen);
 	//if (screen.dwSize.X < 170) {
 	//	cout << "bitte die momentane font size ändern";
 	//	while (screen.dwSize.X < 170) {
 	//
 	//	}
 	//}
-	//lastsize = screen.dwSize.X;
+	lastsize = screen.dwSize.X;
 }
 
 
@@ -751,17 +834,31 @@ void Draw::mostlikelysq(Draw& drawer) {
 
 	for (int z2 = 0; z2 < 10; z2++) {
 		for (int y2 = 0; y2 < 9; y2++) {
-			cout << endwahrscheinlichkeit[z2][y2] << " , ";
+			std::cout << endwahrscheinlichkeit[z2][y2] << " , ";
 		}
-		cout << endwahrscheinlichkeit[z2][9] << "\n";
+		std::cout << endwahrscheinlichkeit[z2][9] << "\n";
 	}
-	cout << "\n";
+	std::cout << "\n";
 	for (int z3 = 0; z3 < 10; z3++) {
 		for (int y3 = 0; y3 < 9; y3++) {
-			cout << endwahrscheinlichkeit[z3][y3] * 100 << "% , ";
+			std::cout << endwahrscheinlichkeit[z3][y3] * 100 << "% , ";
 		}
-		cout << endwahrscheinlichkeit[z3][9] * 100 << "%\n";
+		std::cout << endwahrscheinlichkeit[z3][9] * 100 << "%\n";
 	}
 	system("pause");
 
 }
+
+
+/*funny stats
+anzahl aller 'runden'7240
+anzahl rand treffer pc1:298
+anzahl rand treffer pc2:303
+die hoechste anzahl fuer ein spiel war:66
+die niedrigste anzahl fuer ein spiel war:15
+der durchschnitt fuer ein spiel war:36.2
+siege von PC 1:53
+siege von Pc 2:47
+wahrscheinlichkeit vom sieg fuer PC 1:0.53
+wahrscheinlichkeit vom sieg fuer PC 2:0.47
+*/

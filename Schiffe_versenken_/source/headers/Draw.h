@@ -33,11 +33,27 @@ class Draw
 	friend class Player1;
 	friend class Player;
 	friend class Compare;
+	friend int main();
 	std::string temp = "Waehlen sie die Reihe: ";
 	std::string temp2 = "Waehlen sie die Spalte: ";
 	std::string temp3 = "Druecken sie enter";
-	HANDLE console = nullptr;
 public:
+	//void (Draw::* makemapfunc) (std::vector<std::vector<bool>>&, std::vector<std::vector<bool>>&, std::vector<std::vector<char*>>&, bool, std::vector<std::vector<WORD>>&, std::vector<std::vector<bool>>&) = &Draw::makemap;
+	//void integer() {
+	//	//makemapfunc(zeros,zeros2,charptrs,false,colors,dest1);
+	//	auto funcc = &Draw::makemap;
+	//	dothefunc(makemapfunc);
+	//}
+	//void dothefunc(auto op) {
+	//	std::vector<std::vector<bool>> zeros = std::vector<std::vector<bool>>(10, std::vector<bool>(10, 0));
+	//	std::vector<std::vector<bool>> zeros2 = std::vector<std::vector<bool>>(10, std::vector<bool>(10, 0));
+	//	op(zeros, zeros2, charptrs, false, colors, dest1);
+	//}
+	void makemap(std::vector<std::vector<bool>>&, std::vector<std::vector<bool>>&, std::vector<std::vector<char*>>&, bool, std::vector<std::vector<WORD>>& colors, std::vector<std::vector<bool>>&);
+
+	int currentsize = 0;
+	int lastsize = 0;
+	HANDLE console = nullptr;
 	std::vector<std::vector<bool>> dest1 = std::vector<std::vector<bool>>(10, std::vector<bool>(10, 0));
 	std::vector<std::vector<bool>> dest2 = std::vector<std::vector<bool>>(10, std::vector<bool>(10, 0));
 	std::vector<std::vector<char*>> charptrs = std::vector<std::vector<char*>>(10, std::vector<char*>(10, nullptr));
@@ -61,7 +77,6 @@ public:
 	template<typename _T, typename __T>
 	void setmakedrawmap(std::vector<std::string>&, std::string&, _T&, __T&, bool, bool, int, bool);
 	void setansig(std::string&);
-	void makemap(std::vector<std::vector<bool>>&, std::vector<std::vector<bool>>&, std::vector<std::vector<char*>>&, bool, std::vector<std::vector<WORD>>& colors, std::vector<std::vector<bool>>&);
 	void wahlget(int&, std::string&, int);
 
 	void mostlikelysq(Draw&);
@@ -84,3 +99,4 @@ public:
 
 	Draw();
 };
+void reset(Draw&);

@@ -4,12 +4,12 @@
 void Computer::placeships(Draw& drawer,HANDLE& console) {
 	int wahlR = 0;
 	int wahlS = 0;
-	int wahl[10] = { 1,1,1,1,2,2,2,3,3,4 };
+	int wahl[10] = { 2,3,3,4,5 };
 	bool is_horizontal = 0;
 	std::string waiter;
 	
 	//shipsplacement.reserve(10);
-	for (int i = 0; i < 11; i++) {
+	for (int i = 0; i < 5; i++) {
 		is_horizontal = (rand() % 2 == 0);
 		do {
 			wahlR = rand() % 10;
@@ -24,7 +24,12 @@ void Computer::placeships(Draw& drawer,HANDLE& console) {
 		ships ship = { wahlR, wahlS, wahl[i], is_horizontal };
 		shipsplacement.push_back(ship);
 	}
-	trefferuebrig = 20;
+	trefferuebrig = 17;
+}
+Computer::Computer(Draw& drawer){
+	//probabilityPc p(drawer);
+	std::shared_ptr<probabilityPc> p(new probabilityPc(drawer));
+	prob = p;
 }
 //void Computer::movemaker(int& x,int& y,int,Draw& drawer) {
 //

@@ -6,44 +6,26 @@
 #include <memory>
 class Computer : public Player1 {
 private:
-	std::vector<std::vector<bool>> eigeneschiffe = {
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-	};
+	//std::vector<std::vector<bool>> eigeneschiffe = {
+	//	{0,0,0,0,0,0,0,0,0,0},
+	//	{0,0,0,0,0,0,0,0,0,0},
+	//	{0,0,0,0,0,0,0,0,0,0},
+	//	{0,0,0,0,0,0,0,0,0,0},
+	//	{0,0,0,0,0,0,0,0,0,0},
+	//	{0,0,0,0,0,0,0,0,0,0},
+	//	{0,0,0,0,0,0,0,0,0,0},
+	//	{0,0,0,0,0,0,0,0,0,0},
+	//	{0,0,0,0,0,0,0,0,0,0},
+	//	{0,0,0,0,0,0,0,0,0,0},
+	//};
 
-	int schiffeuebrig = 5;
-	std::array<int, 4> shipsleft = { 1,2,1,1 };
-	std::shared_ptr<probabilityPc> prob = nullptr;
+
 	friend class Draw;
 	friend class Compare;
 	friend int main();
 	//friend class Player;
 public:
-	std::vector<ships> shipsplacement;
-	std::vector<std::vector<bool>> treffer = { //wohin habe ich geschossen
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	};
-	int trefferuebrig = 17;
 	void placeships(Draw&, HANDLE&);
-	void doAiStuff(); //sehr guter name für eine funktion ich weiß 
-	//void movemaker(int&, int&, int, Draw&);
 	Computer(Draw&);
 };
 

@@ -11,42 +11,30 @@
 #include "probabilityPc.h"
 class Player : public Player1{
 private:
-	std::vector<std::vector<bool>> eigeneschiffe = {
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-		{0,0,0,0,0,0,0,0,0,0},
-	};
-	int schiffeuebrig = 5;
-	std::array<int, 4> shipsleft = {1,2,1,1};
+
+
 	friend class Draw;
 	friend class Compare;
 	friend int main();
-	std::unique_ptr<probabilityPc> prob = nullptr;
 public:
-	int spaggethicode() {
-
-	}
-	std::vector<ships> shipsplacement;
-	int trefferuebrig = 17;
-	std::vector<std::vector<bool>> treffer = {
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	};
+	//std::unique_ptr<probabilityPc> prob = nullptr;
+	//int schiffeuebrig = 5;
+	//int trefferuebrig = 17;
+	//std::array<int, 4> shipsleft = { 1,2,1,1 };
+	//std::vector<ships> shipsplacement;
+	//LPCWSTR s;
+	//std::vector<std::vector<bool>> treffer = {
+	//{0,0,0,0,0,0,0,0,0,0},
+	//{0,0,0,0,0,0,0,0,0,0},
+	//{0,0,0,0,0,0,0,0,0,0},
+	//{0,0,0,0,0,0,0,0,0,0},
+	//{0,0,0,0,0,0,0,0,0,0},
+	//{0,0,0,0,0,0,0,0,0,0},
+	//{0,0,0,0,0,0,0,0,0,0},
+	//{0,0,0,0,0,0,0,0,0,0},
+	//{0,0,0,0,0,0,0,0,0,0},
+	//{0,0,0,0,0,0,0,0,0,0},
+	//};
 	void placeships(Draw&, HANDLE&);
 	Player(Draw&);
 	//void movemaker(int&, int&, int, Draw&);
@@ -86,3 +74,46 @@ public:
 
 	return 0;
 */
+
+
+
+
+//	#include <iostream>
+//	#include <memory>
+//	
+//	class MyClass {
+//	public:
+//		std::weak_ptr<MyClass> weak_ptr_;
+//	
+//		~MyClass() {
+//			std::cout << "MyClass object destroyed." << std::endl;
+//		}
+//	};
+//
+//	int main() {
+//		std::shared_ptr<MyClass> shared_ptr1 = std::make_shared<MyClass>();
+//		std::weak_ptr<MyClass> weak_ptr1 = shared_ptr1;
+//	
+//		std::cout << "weak_ptr1 use count: " << weak_ptr1.use_count() << std::endl; // prints 1
+//		{
+//			std::shared_ptr<MyClass> shared_ptr2 = weak_ptr1.lock();
+//			if (shared_ptr2) {
+//				std::cout << "shared_ptr2 use count: " << shared_ptr2.use_count() << std::endl; // prints 2
+//			}
+//		}
+//		std::cout << "weak_ptr1 use count: " << weak_ptr1.use_count() << std::endl; // prints 1
+//	
+//		shared_ptr1->weak_ptr_ = weak_ptr1;
+//	
+//		return 0;
+//	}
+//In this example, we first create a shared_ptr to a MyClass object, and then we create a weak_ptr to that same object.
+//We then check the use count of the weak_ptr, which should be 1 since it's the only weak_ptr pointing to the object.
+//We then create another shared_ptr from the weak_ptr using the lock() method, which creates a new shared_ptr pointing
+//to the same object if the object is still alive.We check the use count of this shared_ptr, which should be 2 since both
+//the original shared_ptr and this new shared_ptr point to the same object.
+//We then create a new scope and destroy the second shared_ptr, which should decrement the use count of the object to 1.
+//Finally, we assign the weak_ptr to a member variable of the MyClass object.This allows the MyClass object to keep track 
+//of the weak_ptr, and it can use it to create a new shared_ptr to itself if necessary.
+
+

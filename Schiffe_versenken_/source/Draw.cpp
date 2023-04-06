@@ -83,10 +83,12 @@ int zahl = 0;
 
 
 template<typename _T, typename __T>
-int Draw::gameloop(Draw& drawer, _T& p1, __T& p2, bool z, bool x, bool y, bool c) {//der erste bool sagt ob man die schiffe in der linken map sehen kann
+int Draw::gameloop(Draw& drawer, _T& p1, __T& p2, bool z, bool x, bool y, bool c, bool draw_map) {
+	//der erste bool sagt ob man die schiffe in der linken map sehen kann
 	//der zweite bool sagt ob man die schiffe in der rechten map sehen kann
 	//der dritte bool sagt ob die rechte map ueberhaupt existiert
 	//der vierte bool sagt ob die map sich bei jedem zug nicht aendert
+	//der fünfte bool sagt ob die karte gemacht werden soll nur nützlich um zu gucken wie gut der algorithmus ist
 	static_assert(is_same<_T, Player>::value || is_same<_T, Computer>::value, "argument 2 muss entweder vom Typ Player oder Computer sein");   // das ist dafür, dass nicht die falschen typen reingemacht werden
 	static_assert(is_same<__T, Player>::value || is_same<__T, Computer>::value, "argument 3 muss entweder vom Typ Player oder Computer sein");
 	int wahlS = 0;
@@ -123,19 +125,20 @@ int Draw::gameloop(Draw& drawer, _T& p1, __T& p2, bool z, bool x, bool y, bool c
 						}
 					}
 					p2.prob->select_next_guess(p2.treffer, wahlR, wahlS);
-					
 				}
 			} while (!p2.validmove(wahlR, wahlS, p2.treffer));
 			p2.treffer[wahlR][wahlS] = 1;
 		}
 		isdestroyed(drawer, p1, p2, dest1);
 		isdestroyed(drawer, p2, p1, dest2);
-
-		setmakedrawmap(mapp2, nthing, p1, p2, z, x, 0, y);
 		for (int j = 0; j < 4; j++) {
 			*charptrs3[j][0] = p1.shipsleft[(long long)3 - j] + 48;
 			*charptrs3[j][1] = p2.shipsleft[(long long)3 - j] + 48;
 		}
+		if (draw_map){
+			setmakedrawmap(mapp2, nthing, p1, p2, z, x, 0, y);
+		}
+
 
 	}
 	else {
@@ -169,7 +172,9 @@ int Draw::gameloop(Draw& drawer, _T& p1, __T& p2, bool z, bool x, bool y, bool c
 		setmakedrawmap(mapp2, nthing, p1, p2, z, x, 0, y);
 	}
 	else {
-		setmakedrawmap(mapp2, nthing, p1, p2, z, x, 0, y);
+		if (draw_map){
+			setmakedrawmap(mapp2, nthing, p1, p2, z, x, 0, y);
+		}
 	}
 	cursPosSet(24, 25);
 	if (c) {
@@ -239,7 +244,7 @@ void Draw::drawPvP(Draw& drawer) {
 			 m = 0; n = 1;
 			//zaehler = gameloop(drawer, p1, p2, 1, 0, 1, 0);
 		}
-		zaehler = gameloop(drawer, players[n], players[m], 1, 0, 1, 0);
+		zaehler = gameloop(drawer, players[n], players[m], 1, 0, 1, 0, 1);
 	}
 	system("pause");
 }
@@ -253,7 +258,7 @@ void Draw::drawPv(Draw& drawer) {
 	pc.trefferuebrig = 17;
 	mapp[0] =  "Gegner Schiffe                                               ";
 	while (!game_end) {
-		zaehler = gameloop(drawer, pc, pc, 0, 0, 0, 0);
+		zaehler = gameloop(drawer, pc, pc, 0, 0, 0, 0 , 1);
 		zahl++;
 	}
 	cursPosSet(0, 25);
@@ -270,16 +275,35 @@ void Draw::drawPvC(Draw& drawer) {
 	pc1.placeships(drawer, console);
 	p1.placeships(drawer, console);
 	while (!game_end) {
-		zaehler = gameloop(drawer, p1, pc1, 1, 0, 1, 1);
+		zaehler = gameloop(drawer, p1, pc1, 1, 0, 1, 1, 1);
 	}
 }
-
+//#define debug
 void Draw::drawCvC(Draw& drawer) {
+
+	string debugtemp1;
+	int debugtemp2 = 1;
+	cout << "debug modus\nja(1)\nnein(0)\n";
+	wahlget(debugtemp2, debugtemp1, 2);
+	bool debug = debugtemp2 != 0;
 	string siztemp;
-	int siz = 0;
-	wahlget(siz, siztemp, 2);
+	int siz = 1;
+	string drawtemp;
+	int drawtemp2 = 1;
+	string showtemp;
+	int showtemp2 = 1;
+	if (debug){
+		cout << "wie viele durchläufe?\n";
+		wahlget(siz, siztemp, 2);
+		cout << "soll die map gezeichnet werden?\nja(1)\nnein(0)\n";
+		wahlget(drawtemp2, drawtemp, 2);
+		cout << "sollen unregelmäßig hohe oder niedrige anzahl an zuegen angezeigt werden \nja(1)\nnein(0)\n";
+		wahlget(showtemp2, showtemp, 2);
+	}
+	bool draw_map = drawtemp2 != 0;
+	bool show_weird_things = showtemp2 != 0;
 	pair<int, int> wins = { 0,0 };
-	vector<int> durchschnitt = vector<int>(siz,0);
+	//vector<int> durchschnitt = vector<int>(siz,0);
 	double ds = 0.0;
 	double prevds = 0.0;
 	int hoechsteanzahl = INT_MIN;
@@ -287,7 +311,8 @@ void Draw::drawCvC(Draw& drawer) {
 	int randtreffer1 = 0;
 	int randtreffer2 = 0;
 	long long bigzahl = 0;
-	for (int k = 0; k < siz; k++){
+	std::chrono::high_resolution_clock::time_point start_time = std::chrono::high_resolution_clock::now();
+	for (int k = 0; k < siz; k++) {
 		reset(drawer);
 		zahl = 0;
 		zaehler = 0;
@@ -301,37 +326,80 @@ void Draw::drawCvC(Draw& drawer) {
 		mapp[0] = "Computer 1                                                   ";
 		mapp2[0] = "Computer 2                                                   ";
 		while (!game_end) {
-			zaehler = gameloop(drawer, pc1, pc2, 1, 1, 1, 1);
+			zaehler = gameloop(drawer, pc1, pc2, 1, 1, 1, 1, draw_map);
 			ds++;
 			bigzahl++;
 		}
-		if (ds - prevds > hoechsteanzahl){
-			hoechsteanzahl = (int)ds - (int)prevds;
+		if (debug) {
+			(zaehler % 2) ? wins.second++ : wins.first++;
+			if (ds - prevds > hoechsteanzahl) {
+				hoechsteanzahl = (int)ds - (int)prevds;
+			}
+			if (ds - prevds < niedrigstzahl) {
+				niedrigstzahl = (int)ds - (int)prevds;
+			}
+			if (show_weird_things){
+				if ((int)(ds - prevds) / 2 > 70) {
+					setmakedrawmap(mapp2, nthing, pc1, pc2, 1, 1, 0, 1);
+					cursPosSet(0, 25);
+					cout << (ds - prevds) / 2 << ", " << wins.first + wins.second;
+					cout << "\n" << pc1.prob->numberofrandhits << ", " << pc2.prob->numberofrandhits << " ";
+					system("pause");
+				}
+				if ((int)(ds - prevds) / 2 <= 10) {
+					setmakedrawmap(mapp2, nthing, pc1, pc2, 1, 1, 0, 1);
+					cursPosSet(0, 25);
+					cout << (ds - prevds) / 2 << ", " << wins.first + wins.second;
+					cout << "\n" << pc1.prob->numberofrandhits << ", " << pc2.prob->numberofrandhits << " ";
+					system("pause");
+				}
+			}
+			cursPosSet(0, 25);
+			randtreffer1 += pc1.prob->numberofrandhits;
+			randtreffer2 += pc2.prob->numberofrandhits;
+			prevds = ds;
 		}
-		if (ds- prevds < niedrigstzahl){
-			niedrigstzahl = (int)ds - (int)prevds;
-		}
-		(zaehler % 2) ? wins.second++:wins.first++ ;
-		//mapp[0] = "Eigene Karte                                                ";
-		//mapp2[0] = "Gegner Karte                                                ";
-		cursPosSet(0, 25);
-		//system("pause");
-		randtreffer1 += pc1.prob->numberofrandhits;
-		randtreffer2 += pc2.prob->numberofrandhits;
-		prevds = ds;
 	}
-	ds = ds / siz;
-	std::cout << "anzahl aller 'runden'" << bigzahl;
-	std::cout << "\nanzahl rand treffer pc1:" << randtreffer1;
-	std::cout << "\nanzahl rand treffer pc2:" << randtreffer2;
-	std::cout << "\ndie hoechste anzahl fuer ein spiel war:" << hoechsteanzahl / 2;
-	std::cout << "\ndie niedrigste anzahl fuer ein spiel war:" << niedrigstzahl / 2;
-	std::cout << "\nder durchschnitt fuer ein spiel war:" << ds / 2;
-	std::cout <<"\nsiege von PC 1:" << wins.first <<"\nsiege von Pc 2:"<< wins.second;
-	std::cout << "\nwahrscheinlichkeit vom sieg fuer PC 1:" << (double)wins.first / siz;
-	std::cout << "\nwahrscheinlichkeit vom sieg fuer PC 2:" << (double)wins.second / siz;
+	if (debug){
+		std::chrono::high_resolution_clock::time_point end_time = std::chrono::high_resolution_clock::now();
+		std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds>((end_time - start_time));
+		system("pause");
+		cursPosSet(0, 0);
+		system("cls");
+		ds = ds / siz;
+		int days = duration.count() / (24 * 60 * 60 * 1000);
+		int hours = (duration.count() / (60 * 60 * 1000)) % 24;
+		int minutes = (duration.count() / (60 * 1000)) % 60;
+		int seconds = (duration.count() / 1000) % 60;
+		int milliseconds = duration.count() % 1000;
+		std::cout << "anzahl aller 'runden' " << bigzahl;
+		std::cout << "\nanzahl rand treffer pc1:" << randtreffer1;
+		std::cout << "\nanzahl rand treffer pc2:" << randtreffer2;
+		std::cout << "\ndie hoechste anzahl fuer ein spiel war: " << hoechsteanzahl / 2;
+		std::cout << "\ndie niedrigste anzahl fuer ein spiel war: " << niedrigstzahl / 2;
+		std::cout << "\nder durchschnitt fuer ein spiel war: " << ds / 2;
+		std::cout << "\nsiege von PC 1: " << wins.first << "\nsiege von Pc 2: " << wins.second;
+		std::cout << "\nwahrscheinlichkeit vom sieg fuer PC 1: " << (double)wins.first / siz;
+		std::cout << "\nwahrscheinlichkeit vom sieg fuer PC 2: " << (double)wins.second / siz;
+		std::cout << "\n";
+		if (days > 0) {
+			cout << "Tage: " << days << "; ";
+		}
+		if (hours > 0 || days > 0) {
+			cout << "Stunden: " << hours << "; ";
+		}
+		if (minutes > 0 || hours > 0 || days > 0) {
+			cout << "Minuten: " << minutes << "; ";
+		}
+		cout << "Sekunden: " << seconds << "; Millisekunden: " << milliseconds;
 
-	//system("pause");
+		std::cout << "\n";
+	}
+	else{
+		cursPosSet(0, 25);
+	}
+	mapp[0] = "Eigene Karte                                                ";
+	mapp2[0] = "Gegner Karte                                                ";
 }
 
 void Draw::setmap(std::vector<std::string>& result, std::vector<std::string>& mp1, std::vector<std::string>& mp2, std::vector<std::string>& mp3, std::string& x) {
@@ -646,13 +714,16 @@ Draw::Draw() {
 	coords3 = { { 138 ,3},{138 ,5},{138 ,7},{138 ,9},{138, 11} };
 	coords3.shrink_to_fit();
 	console = GetStdHandle(STD_OUTPUT_HANDLE);
+
 	CONSOLE_CURSOR_INFO cursorInfo;
 	GetConsoleCursorInfo(console, &cursorInfo);
 	cursorInfo.bVisible = false;
 	SetConsoleCursorInfo(console, &cursorInfo);
 	SetConsoleActiveScreenBuffer(console);
+
 	CONSOLE_SCREEN_BUFFER_INFO screen;
 	GetConsoleScreenBufferInfo(console, &screen);
+
 	//if (screen.dwSize.X < 170) {
 	//	cout << "bitte die momentane font size ändern";
 	//	while (screen.dwSize.X < 170) {
@@ -660,6 +731,9 @@ Draw::Draw() {
 	//	}
 	//}
 	lastsize = screen.dwSize.X;
+	if (randnumbermax <= 9) {
+		randnumbermax = 10;
+	}
 }
 
 
@@ -861,4 +935,17 @@ siege von PC 1:53
 siege von Pc 2:47
 wahrscheinlichkeit vom sieg fuer PC 1:0.53
 wahrscheinlichkeit vom sieg fuer PC 2:0.47
+
+
+anzahl aller 'runden' 77801548
+anzahl rand treffer pc1:1694405
+anzahl rand treffer pc2:1678280
+die hoechste anzahl fuer ein spiel war: 79
+die niedrigste anzahl fuer ein spiel war: 8
+der durchschnitt fuer ein spiel war: 38.9008
+siege von PC 1: 517546
+siege von Pc 2: 482454
+wahrscheinlichkeit vom sieg fuer PC 1: 0.517546
+wahrscheinlichkeit vom sieg fuer PC 2: 0.482454
+
 */

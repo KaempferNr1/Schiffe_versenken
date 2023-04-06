@@ -27,9 +27,7 @@ void Computer::placeships(Draw& drawer,HANDLE& console) {
 	trefferuebrig = 17;
 }
 Computer::Computer(Draw& drawer){
-	//probabilityPc p(drawer);
-	std::shared_ptr<probabilityPc> p(new probabilityPc(drawer));
-	prob = p;
+	prob = std::make_unique<probabilityPc>(drawer);
 }
 //void Computer::movemaker(int& x,int& y,int,Draw& drawer) {
 //

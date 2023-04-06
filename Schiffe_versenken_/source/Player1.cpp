@@ -16,6 +16,15 @@ bool Player1::gameover(Draw&, bool&){
 	return false;
 }
 
+int Player1::getsmallestshiplen(std::array<int, 4>& ships){
+	for (int i = 0; i < 4; i++){
+		if (ships[i] != 0){
+			return i + 2;
+		}
+	}
+	return -1;
+}
+
 
 void Player1::change(int& s, int x, bool& check, Draw& drawer) {
 	s--;

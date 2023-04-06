@@ -11,11 +11,12 @@
 #include "headers\Compare.h"
 using namespace std;
 void clearscreen(Draw&);
+
+// min size damit es funktioniert 170
+//system("pause");
+//system("cls");
 int main() {
-	//system("pause");
-	//system("cls");
 	Draw drawer;	
-	// min size damit es funktioniert 170
 	bool windowopen = true;
 	string auswahl_temp = "";
 	int auswahl = 4;
@@ -42,13 +43,13 @@ int main() {
 	//	drawer.setmap(drawer.mappp, drawer.mapp, drawer.mapp2, drawer.mapp3, drawer.nthing);
 	//	drawer.drawMap(0, drawer.mappp, 1);
 	//}
-	for (int i = 1; i < 10; i++){std::cout << i << " ";}
+	
+	//unique_ptr<> user;
 	while (windowopen) {
 		reset(drawer);
 		system("pause");
 		clearscreen(drawer);
 		drawer.wahlget(auswahl, auswahl_temp, 1);
-
 		switch (auswahl)	{
 		case 1:
 			drawer.drawPvP(drawer);
@@ -63,6 +64,8 @@ int main() {
 			drawer.drawCvC(drawer);
 			break;
 		case 5:
+			break;
+		case 6:
 			drawer.mostlikelysq(drawer);
 			break;
 		default:

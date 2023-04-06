@@ -24,14 +24,13 @@ namespace std {
 class probabilityPc{
 	std::map<probs, probs> probabilitys;
 public:
+	int zaehler = 0;
 	bool foundhit = 0;
 	int numberofrandhits = 0;
 	Draw* dptr = nullptr;
 	std::vector<std::vector<double>> probss = std::vector<std::vector<double>>(10, std::vector<double>(10, 1));
 	std::vector<std::vector<char>> map = std::vector<std::vector<char>>(10, std::vector<char>(10, miss));
 	std::vector<std::vector<bool>> boolmap = std::vector<std::vector<bool>>(10, std::vector<bool>(10, 0));
-	bool currently_hunting = 0;
-	bool dir_known = 0;
 	template<typename _T, typename __T>
 	void makemove(_T&, __T&, int&, int&);
 	std::vector<std::vector<double>> initialize_grid();

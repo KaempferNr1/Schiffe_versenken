@@ -42,17 +42,14 @@ void probabilityPc::update_probabilities(vector<vector<bool>>& hits) {
 }
 
 void probabilityPc::select_next_guess(vector<vector<bool>>& x,int& next_row, int& next_col) {
-    //for (int row2 = 0; row2 < 10; row2++){
-    //    for (int col2 = 0; col2 < 10; col2++){
-    //        if (probss[row2][col2] != 0.0){
-    //            probss[row2][col2] = 1;
-    //        }
-    //    }           
-    //}
-    std::mt19937_64 randomengine(std::chrono::system_clock::now().time_since_epoch().count());
-    if (randnumbermax <= 9){
-        randnumbermax = 10;
+    for (int row2 = 0; row2 < 10; row2++){
+        for (int col2 = 0; col2 < 10; col2++){
+            if (!x[row2][col2] && probss[row2][col2] != 0) {
+                probss[row2][col2] = 1;
+            }
+        }
     }
+    std::mt19937_64 randomengine(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_int_distribution distr(0,randnumbermax-1);
     int rowrand = distr(randomengine);
     int colrand = distr(randomengine);
@@ -101,7 +98,8 @@ void probabilityPc::select_next_guess(vector<vector<bool>>& x,int& next_row, int
             }
             else if (cell == hit) {
                 //probss[row][col] = 0.0;
-                change_probs(x, col, row, 2, 1);
+                change_probs(x, col, row, 3, 1);
+                foundhit = true;
                 //if (row != 9) {
                 //    if (!x[(long long)row + 1][(long long)col]) {
                 //        probss[(long long)row + 1][(long long)col] += 3;
@@ -233,13 +231,54 @@ void probabilityPc::select_next_guess(vector<vector<bool>>& x,int& next_row, int
     //    std::cout << probss[i][9] << "\n";
     //}
     //system("pause");
-    //if(!foundhit){
-    //    do{
-    //        next_row = rand() % 10;
-    //        next_col = rand() % 10;
-    //    } while (!((x[next_row][next_col] == 0) ? 1 : 0));
-    //    return;
-    //}
+    if (!foundhit) {
+        if (zaehler % 2 == 0) {
+            double max_prob2 = -1.0;
+            unordered_map<double, pair<int, int>> candidates2;
+            for (int r = 9; r >= 0; r--) {
+                for (int c = 9; c >= 0; c--) {
+                    if (!x[r][c]) {
+                        if (probss[r][c] > max_prob2) {
+                            max_prob2 = probss[r][c];
+                        }
+                        candidates2[probss[r][c]] = make_pair(r, c);
+                    }
+                }
+            }
+            next_row = candidates2[max_prob2].first;
+            next_col = candidates2[max_prob2].second;
+            zaehler++;
+            return;
+        }
+        if (zaehler % 3){
+            double max_prob2 = -1.0;
+            unordered_map<double, pair<int, int>> candidates2;
+            for (int r = 4; r >= 0; r--) {
+                for (int c = 4; c >= 0; c--) {
+                    if (!x[r][c]) {
+                        if (probss[r][c] > max_prob2) {
+                            max_prob2 = probss[r][c];
+                        }
+                        candidates2[probss[r][c]] = make_pair(r, c);
+                    }
+                }
+            }
+            for (int r = 5; r < 10; r++) {
+                for (int c = 5; c < 10; c++) {
+                    if (!x[r][c]) {
+                        if (probss[r][c] > max_prob2) {
+                        max_prob2 = probss[r][c];
+                    }
+                    candidates2[probss[r][c]] = make_pair(r, c);
+                    }
+                }
+            }
+            next_row = candidates2[max_prob2].first;
+            next_col = candidates2[max_prob2].second;
+            zaehler++;
+            return;
+        }
+    }
     double max_prob = -1.0;
     unordered_map<double, pair<int, int>> candidates;
     for (int r = 0; r < 10; r++) {
@@ -252,74 +291,62 @@ void probabilityPc::select_next_guess(vector<vector<bool>>& x,int& next_row, int
             }
         }
     }
-    if (max_prob <= 1) {
-        do {
-            next_row = rand() % 10;
-            next_col = rand() % 10;
-        } while (!((x[next_row][next_col] == 0) ? 1 : 0));
-        candidates[2] = make_pair(next_row, next_col);
-        max_prob = 2;
-    }
     next_row = candidates[max_prob].first;
     next_col = candidates[max_prob].second;
+    zaehler++;
 
 }
+
+
+
+//if (max_prob <= 1) {
+ //    do {
+ //        next_row = rand() % 10;
+ //        next_col = rand() % 10;
+ //    } while (!((x[next_row][next_col] == 0) ? 1 : 0));
+ //    candidates[2] = make_pair(next_row, next_col);
+ //    max_prob = 2;
+ //}
 
 void probabilityPc::change_probs(std::vector<std::vector<bool>>& x, int& col, int& row, double change, bool do_thething){
     probss[row][col] = 0.0;
     if (row != 9) {
         if (!x[(long long)row + 1][(long long)col]) {
-            probss[(long long)row + 1][(long long)col] += change;
-            if (map[row][col] == hit){
-                foundhit = true;
-            }
+            probss[(long long)row + 1][(long long)col] += change;            
         }
         if (map[(long long)row + 1][(long long)col] == hit && do_thething) {
             if (row != 0 && !x[(long long)row - 1][(long long)col]) {
                 probss[(long long)row - 1][(long long)col] += 8;
-                foundhit = true; 
             }
         }
     }
     if (col != 9) {
         if (!x[(long long)row][(long long)col + 1]) {
             probss[(long long)row][(long long)col + 1] += change;
-            if (map[row][col] == hit) {
-                foundhit = true;
-            }
         }
         if (map[(long long)row][(long long)col + 1] == hit && do_thething) {
             if (col != 0 && !x[(long long)row][(long long)col - 1]) {
                 probss[(long long)row][(long long)col - 1] += 8;
-                foundhit = true;
             }
         }
     }
     if (row != 0) {
         if (!x[(long long)row - 1][(long long)col]) {
             probss[(long long)row - 1][(long long)col] += change;
-            if (map[row][col] == hit) {
-                foundhit = true;
-            }
         }
         if (map[(long long)row - 1][(long long)col] == hit && do_thething) {
             if (row != 9 && !x[(long long)row + 1][(long long)col]) {
                 probss[(long long)row + 1][(long long)col] += 8;
-                foundhit = true;
             }
         }
     }
     if (col != 0) {
         if (!x[(long long)row][(long long)col - 1]) {
             probss[(long long)row][(long long)col - 1] += change;
-            if (map[row][col] == hit) {
-                foundhit = true;
-            }
         }
         if (map[(long long)row][(long long)col - 1] == hit && do_thething) {
             if (col != 9 && !x[(long long)row][(long long)col + 1]) {
                 probss[(long long)row][(long long)col + 1] += 8;
-                foundhit = true;
             }
         }
     }
@@ -337,5 +364,7 @@ void probabilityPc::change_probs(std::vector<std::vector<bool>>& x, int& col, in
    //I | o | o | o | x | x | x | o | o | o | o | I               I | o | o | o | o | o | o | o | o | o | o | I
    //J | o | o | o | o | o | o | o | o | o | o | J               J | o | o | x | x | o | o | o | o | o | o | J
    //  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+
+
 
 

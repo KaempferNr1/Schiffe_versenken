@@ -55,6 +55,7 @@ void Draw::drawMap(int x, std::vector<std::string>& map, bool mapp2_true) { // x
 	SetConsoleActiveScreenBuffer(console);
 	lastsize = currentsize;
 }
+
 void Draw::cursPosSet(int x, int y) {
 	COORD cursorpos = { 0,0 };
 	cursorpos.X = x; cursorpos.Y = y;

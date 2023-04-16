@@ -1,9 +1,9 @@
 #pragma once
 #include "global.h"
 #include "Player1.h"
-#include "Draw.h"
 #include "probabilityPc.h"
 #include <memory>
+class Draw;
 class Computer : public Player1 {
 private:
 	//std::vector<std::vector<bool>> eigeneschiffe = {
@@ -25,12 +25,14 @@ private:
 	friend int main();
 	//friend class Player;
 public:
-	void placeships(Draw&, HANDLE&);
+	void make_move(Draw&, Player1&, int&, int&, bool, bool, bool, std::vector<std::vector<bool>>&) override;
+	void placeships(Draw&, HANDLE&) override;
 	Computer(Draw&);
+	Computer(Draw&,int);
 };
 
 
-//wo bei CvC am häufigsten schiffe
+//interessante zahlen
 //std::vector<std::vector<double>> percenteges = {
 //{0.114959 , 0.154027 , 0.174043 , 0.182481 , 0.182162 , 0.183361 , 0.181778 , 0.174094 , 0.155378 , 0.119753},
 //{0.156583 , 0.188634 , 0.201003 , 0.208318 , 0.211760 , 0.209309 , 0.209837 , 0.202298 , 0.184711 , 0.158119},

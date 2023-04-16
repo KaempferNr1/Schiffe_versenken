@@ -1,7 +1,7 @@
 #include "headers/Player1.h"
 #define valid(v1,x,y) (((v1)[(x)][(y)] == 0) ? 1 : 0)
-using namespace std;
 // funktionen die sowohl Computer als auch Player brauchen
+#include "headers/Draw.h"
 
 void Player1::placeem(int& y, int& x, int j, int z, std::vector<std::vector<bool>>& ships) {
 	for (int o = 0; o < j; o++) {
@@ -16,10 +16,19 @@ bool Player1::gameover(Draw&, bool&){
 	return false;
 }
 
-int Player1::getsmallestshiplen(std::array<int, 4>& ships){
-	for (int i = 0; i < 4; i++){
-		if (ships[i] != 0){
-			return i + 2;
+int Player1::getsmallestshiplen(std::array<int, 4>& ships,bool max_true){
+	if (max_true){
+		for (int i = 3; i >= 0; i--) {
+			if (ships[i] != 0) {
+				return i + 2;
+			}
+		}
+	}
+	else{
+		for (int i = 0; i < 4; i++) {
+			if (ships[i] != 0) {
+				return i + 2;
+			}
 		}
 	}
 	return -1;
@@ -35,20 +44,19 @@ void Player1::change(int& s, int x, bool& check, Draw& drawer) {
 int Player1::getshipsiz(int& s1, int& s2, int& s3, int& s4, Draw& drawer) {
 	int wahl = 0;
 	bool check = 1;
-	vector<int> s = { 5,4,3,2 };
+	std::vector<int> s = { 5,4,3,2 };
 	do {
-		string temp;
-		cout << "welches schiff soll platziert werden?\n";
+		std::string temp;
+		std::cout << "welches schiff soll platziert werden?\n";
 
 		for (int k = 17; k < 21; k++) {
-			cout << s[((long long)k - 17)] << ": ";
+			std::cout << s[((long long)k - 17)] << ": ";
 			for (int j = 0; j < 10; j++) {
-				cout << drawer.mapp3[k][j];
+				std::cout << drawer.mapp3[k][j];
 			}
-			cout << "\n";
+			std::cout << "\n";
 		}
-		//cin >> temp;
-		getline(cin, temp);
+		std::getline(std::cin, temp);
 		wahl = stoii((temp), 48);
 		switch (wahl) {
 		case 2:
@@ -57,7 +65,6 @@ int Player1::getshipsiz(int& s1, int& s2, int& s3, int& s4, Draw& drawer) {
 			}
 			break;
 		case 3:
-			//(s2 != 0) ? (change(s2,1,check)) : donthing();
 			if (s2 != 0) {
 				change(s2, 2, check, drawer);
 			}
@@ -126,14 +133,14 @@ void Player1::shipmanager() {
 //
 //}
 
-bool Player1::validmove(int& x, int& y, vector<vector<bool>>& ships) {
+bool Player1::validmove(int& x, int& y, std::vector<std::vector<bool>>& ships) {
 	if (!((x >= 0 && x <= 9) && (y >= 0 && y <= 9)))
 	{
 		return false;
 	}
 	return valid(ships, x, y);
 }
-bool Player1::validplacement(int& y, int& x, int& leng, bool is_horizontal, vector<vector<bool>>& shipss) {
+bool Player1::validplacement(int& y, int& x, int& leng, bool is_horizontal, std::vector<std::vector<bool>>& shipss) {
 	bool checker = 1;
 	int z = 0;
 	int t = 0;
@@ -167,10 +174,10 @@ void Player1::resettonormal(Draw& drawer) {
 
 }
 void Player1::test(Draw& drawer) {
-	cout << *drawer.charptrs3[0][0];
-	cout << "\n";
+	std::cout << *drawer.charptrs3[0][0];
+	std::cout << "\n";
 	//*drawer.charptrs3[0][0] = shiff1left1 + 48;
-	cout << drawer.mapp3[17];
+	std::cout << drawer.mapp3[17];
 }
 
 void Player1::shipsleftreset(Draw& drawer) {
@@ -214,3 +221,13 @@ ships::ships(int yval, int xval, int len, bool is_horizontal){
 	
 
 }
+
+//ships::ships(ships& other){
+//	this->destroyed		= other.destroyed;
+//	this->horizontal	= other.horizontal;
+//	this->length		= other.length;
+//	this->segsleft		= other.segsleft;
+//	this->shipsplaces	= other.shipsplaces;
+//	this->x				= other.x;
+//	this->y				= other.y;
+//}

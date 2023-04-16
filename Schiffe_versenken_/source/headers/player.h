@@ -9,7 +9,8 @@
 //#include "computer.h"
 #include "Player1.h"
 #include "probabilityPc.h"
-class Player : public Player1{
+
+class Player : public Player1 {
 private:
 
 
@@ -17,26 +18,10 @@ private:
 	friend class Compare;
 	friend int main();
 public:
-	//std::unique_ptr<probabilityPc> prob = nullptr;
-	//int schiffeuebrig = 5;
-	//int trefferuebrig = 17;
-	//std::array<int, 4> shipsleft = { 1,2,1,1 };
-	//std::vector<ships> shipsplacement;
-	//LPCWSTR s;
-	//std::vector<std::vector<bool>> treffer = {
-	//{0,0,0,0,0,0,0,0,0,0},
-	//{0,0,0,0,0,0,0,0,0,0},
-	//{0,0,0,0,0,0,0,0,0,0},
-	//{0,0,0,0,0,0,0,0,0,0},
-	//{0,0,0,0,0,0,0,0,0,0},
-	//{0,0,0,0,0,0,0,0,0,0},
-	//{0,0,0,0,0,0,0,0,0,0},
-	//{0,0,0,0,0,0,0,0,0,0},
-	//{0,0,0,0,0,0,0,0,0,0},
-	//{0,0,0,0,0,0,0,0,0,0},
-	//};
-	void placeships(Draw&, HANDLE&);
+	void make_move(Draw&, Player1&, int&, int&, bool, bool, bool, std::vector<std::vector<bool>>&) override;
+	void placeships(Draw&, HANDLE&) override;
 	Player(Draw&);
+	Player(Draw&, int);
 	//void movemaker(int&, int&, int, Draw&);
 	//void hitmanager(int&, int&, int, Draw&);
 };
@@ -74,7 +59,6 @@ public:
 
 	return 0;
 */
-
 
 
 

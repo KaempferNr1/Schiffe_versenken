@@ -9,41 +9,16 @@
 #include "headers\player.h"
 #include "headers\highscore.h"
 #include "headers\Compare.h"
-using namespace std;
 void clearscreen(Draw&);
 
 // min size damit es funktioniert 170
-//system("pause");
-//system("cls");
 int main() {
 	Draw drawer;	
 	bool windowopen = true;
-	string auswahl_temp = "";
+	std::string auswahl_temp = "";
 	int auswahl = 4;
 	srand((unsigned int)std::chrono::system_clock::now().time_since_epoch().count());
-	//vector<vector<bool>> zeros = vector<vector<bool>>(10, vector<bool>(10, 0));
-	//for (; ;) {
-	//	Computer pc1(drawer);
-	//	pc1.placeships(drawer, drawer.console);
-	//	Computer pc2(drawer);
-	//	pc2.placeships(drawer, drawer.console);
-	//	for (int j = 0; j < 4; j++) {
-	//		//if(j!=2){
-	//			*drawer.charptrs3[j][0] = (rand() % 92)+33;
-	//			*drawer.charptrs3[j][1] = (rand() % 92)+33;
-	//		//}
-	//		//else{
-	// 			//*drawer.charptrs3[j][0] = (rand() % 3) + 48;
-	//			//*drawer.charptrs3[j][1] = (rand() % 3) + 48;
-	//		//}
-	//		//drawer.drawMap(rand()%32, drawer.mappp, 1);
-	//	}
-	//	drawer.makemap(zeros, pc1.eigeneschiffe, drawer.charptrs, 1, drawer.colors, drawer.dest1);
-	//	drawer.makemap(zeros, pc2.eigeneschiffe, drawer.charptrs2, 1, drawer.colors2, drawer.dest2);
-	//	drawer.setmap(drawer.mappp, drawer.mapp, drawer.mapp2, drawer.mapp3, drawer.nthing);
-	//	drawer.drawMap(0, drawer.mappp, 1);
-	//}
-	
+
 	//unique_ptr<> user;
 	while (windowopen) {
 		reset(drawer);
@@ -69,7 +44,7 @@ int main() {
 			drawer.mostlikelysq(drawer);
 			break;
 		default:
-			cout << "okay dann tschau";
+			std::cout << "okay dann tschau";
 			windowopen = false;
 			break;
 		}

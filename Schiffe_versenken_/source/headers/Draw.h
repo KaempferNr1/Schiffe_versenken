@@ -1,11 +1,7 @@
 #pragma once
-//#include <vector>
-//#include <iostream>
-//#include <string>
-//#include <Windows.h>
-//#include "computer.h"
-#include "Compare.h"
 #include "global.h"
+
+class Player1;
 
 class Draw
 {
@@ -71,21 +67,17 @@ public:
 
 	void mostlikelysq(Draw&);
 
-	template<typename _T, typename __T>
-	void isdestroyed(Draw&, _T&, __T&, std::vector<std::vector<bool>>&);
+	void isdestroyed(Draw&, Player1&, Player1&, std::vector<std::vector<bool>>&);
 
 
 	template<typename _T, typename __T>
 	void pcmove(Draw&, _T&, __T&, int&, int&);
 
-	template<typename _T, typename __T>
-	void playermove(_T&, __T&, int&, int&, bool, bool, bool);
+	void playermove(Player1&, Player1&, int&, int&, bool, bool, bool);
 
-	template<typename _T, typename __T>
-	int gameloop(Draw&, _T&, __T&, bool, bool, bool, bool, bool);
+	int gameloop(Draw&, Player1&, Player1&, bool, bool, bool, bool, bool);
 
-	template<typename _T, typename __T>
-	int gamecheck(_T&, __T&, int&, int&);
+	int gamecheck(Player1&, Player1&, int&, int&);
 
 	Draw();
 };

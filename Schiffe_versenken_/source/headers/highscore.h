@@ -1,7 +1,4 @@
 #pragma once
-//#include <fstream>
-//#include <iostream>
-//#include <string>
 #include "global.h"
 #include <ranges>
 #include <algorithm>
@@ -9,11 +6,8 @@ class User {
 private:
 
 public:
-	User();
-	User(User&);
-	User(User&&);
-
-	~User();
+	User() {};
+	~User() {};
 };
 class Highscore{
 public:

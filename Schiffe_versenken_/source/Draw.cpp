@@ -114,8 +114,6 @@ int Draw::gameloop(Draw& drawer, Player1& p1, Player1& p2, bool z, bool x, bool 
 		if (draw_map) {
 			setmakedrawmap(mapp2, nthing, p1, p2, z, x, 0, y);
 		}
-
-
 	}
 	else {
 		do {
@@ -147,10 +145,8 @@ int Draw::gameloop(Draw& drawer, Player1& p1, Player1& p2, bool z, bool x, bool 
 			zaehler = gamecheck(p2, p1, wahlR, wahlS);
 		}
 	}
-	else
-	{
+	else { 
 		zaehler = gamecheck(p1, p2, wahlR, wahlS);
-
 	}
 	zahl++;
 	return zaehler;

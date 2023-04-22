@@ -10,7 +10,11 @@
 
 #include <Windows.h>
 
+namespace schiffe_versenken {
+	namespace global {
 
+	}
+}
 
 constexpr const int sizefield = 10;
 constexpr const char hit = '*';

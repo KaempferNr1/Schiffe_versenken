@@ -1,12 +1,7 @@
 #include "headers\player.h"
 #define valid(v1,x,y) (((v1)[(x)][(y)] == 0) ? 1 : 0) 
 void Player::make_move(Draw& drawer, Player1& p2, int& wahlR, int& wahlS, bool see_ships_left, bool see_ships_right, bool map2_true, std::vector<std::vector<bool>>& dest_vec) {
-	if (drawer.zaehler%2 == 0){
 	drawer.playermove(*this, p2, wahlR, wahlS, see_ships_left, see_ships_right, map2_true);
-	}
-	else{
-		drawer.playermove(p2, *this, wahlR, wahlS, see_ships_left, see_ships_right, map2_true);
-	}
 }
 void Player::placeships(Draw& drawer, HANDLE& console) {
 	bool is_horizontal = 0;
@@ -16,7 +11,7 @@ void Player::placeships(Draw& drawer, HANDLE& console) {
 	for (int k = 0; k < 5; k++) {
 		std::string temp;
 		cursorPos.X = 0; cursorPos.Y = 0;
-		SetConsoleCursorPosition(console, cursorPos);
+		SetConsoleCursorPosition(drawer.console, cursorPos);
 		drawer.makemap(treffer, eigeneschiffe, drawer.charptrs, 1, drawer.colors, drawer.dest1);
 		drawer.setmap(drawer.mappp, drawer.mapp, drawer.mapp3, drawer.emptyvec, drawer.nthing);
 		drawer.drawMap(50, drawer.mappp, 0);

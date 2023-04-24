@@ -18,31 +18,67 @@
 probabilityPc::probabilityPc(Draw& drawer) {
 	randomengine = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
 	dptr = &drawer;
+	std::uniform_real_distribution<double> for_weight_destroyed_missed(-5, 5);
+	std::uniform_real_distribution<double> for_weight_hit_unused(0, 10);
+	hit_weight = for_weight_hit_unused(randomengine);
+	destroyed_weight = for_weight_destroyed_missed(randomengine);
+	missed_weight = for_weight_destroyed_missed(randomengine);
+	unused_weight = for_weight_hit_unused(randomengine);
 	this->fptr = &probabilityPc::hard_version;
+
 }
 probabilityPc::probabilityPc(Draw& drawer, int x) {
 	randomengine = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
 	dptr = &drawer;
+	std::uniform_real_distribution<double> for_weight_destroyed_missed(-5, -0.01);
+	std::uniform_real_distribution<double> for_weight_hit(1, 10);
+	std::uniform_real_distribution<double> for_weight_unused(1, 10);
 	switch (x) {
 	case 1:
 		this->fptr = &probabilityPc::easy_version;
+		hit_weight = 3;
+		destroyed_weight = 3;
+		missed_weight = 0;
+		unused_weight = 0;
 		break;
 	case 2:
 		this->fptr = &probabilityPc::medium_version;
+		hit_weight = 3;
+		destroyed_weight = -0.001;
+		missed_weight = -0.01;
+		unused_weight = 0;
 		break;
 	case 3:
 		this->fptr = &probabilityPc::hard_version;
+		hit_weight = for_weight_hit(randomengine);
+		destroyed_weight = for_weight_destroyed_missed(randomengine);
+		missed_weight = for_weight_destroyed_missed(randomengine);
+		unused_weight = for_weight_unused(randomengine);
 		break;
 	case 4:
 		this->fptr = &probabilityPc::impossible_version;
+		hit_weight = for_weight_hit(randomengine);
+		destroyed_weight = for_weight_destroyed_missed(randomengine);
+		missed_weight = for_weight_destroyed_missed(randomengine);
+		unused_weight = for_weight_unused(randomengine);
 		break;
 	default:
 		this->fptr = &probabilityPc::hard_version;
+		hit_weight = for_weight_hit(randomengine);
+		destroyed_weight = for_weight_destroyed_missed(randomengine);
+		missed_weight = for_weight_destroyed_missed(randomengine);
+		unused_weight = for_weight_unused(randomengine);
 		break;
 	}
 }
 probabilityPc::probabilityPc() {
 	randomengine = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
+	std::uniform_real_distribution<double> for_weight_destroyed_missed(-5, 5);
+	std::uniform_real_distribution<double> for_weight_hit_unused(0, 10);
+	hit_weight = for_weight_hit_unused(randomengine);
+	destroyed_weight = for_weight_destroyed_missed(randomengine);
+	missed_weight = for_weight_destroyed_missed(randomengine);
+	unused_weight = for_weight_hit_unused(randomengine);
 	this->fptr = &probabilityPc::hard_version;
 }
 
@@ -62,7 +98,7 @@ void probabilityPc::update_probabilities(std::vector<std::vector<bool>>& hits) {
 
 void probabilityPc::select_next_guess(std::vector<std::vector<bool>>& x, int& next_row, int& next_col) {
 	(this->*fptr)(x, next_row, next_col);
-	
+
 }
 
 void probabilityPc::easy_version(std::vector<std::vector<bool>>& x, int& next_row, int& next_col) {
@@ -71,11 +107,13 @@ void probabilityPc::easy_version(std::vector<std::vector<bool>>& x, int& next_ro
 		for (int col = 0; col < 10; ++col) {
 			char cell = map[row][col];
 			if (cell == hit) {
-				change_probs(x, col, row, 3, 0);
+				probss[row][col] = 0.0;
+				change_probs(x, col, row, hit_weight, 0, 0);
 				foundhit = true;
 			}
 			else if (cell == destroyed) {
-				change_probs(x, col, row, 3, 0);
+				probss[row][col] = 0.0;
+				change_probs(x, col, row, destroyed_weight, 0, 0);
 			}
 		}
 	}
@@ -94,6 +132,7 @@ void probabilityPc::easy_version(std::vector<std::vector<bool>>& x, int& next_ro
 			next_row = rand() % 10;
 			next_col = rand() % 10;
 		} while (!((x[next_row][next_col] == 0) ? 1 : 0));
+		numberofrandhits++;
 		return;
 	}
 	double max_prob = -1.0;
@@ -138,16 +177,19 @@ void probabilityPc::medium_version(std::vector<std::vector<bool>>& x, int& next_
 		for (int col = 0; col < 10; ++col) {
 			char cell = map[row][col];
 			if (cell == miss) {
-				change_probs(x, col, row, -0.01, 0);
+				probss[row][col] = 0.0;
+				change_probs(x, col, row, missed_weight, 0, 0);
 			}
 			else if (cell == ship) {
 			}
 			else if (cell == hit) {
-				change_probs(x, col, row, 3, 1);
+				probss[row][col] = 0.0;
+				change_probs(x, col, row, hit_weight, 1, 0);
 				foundhit = true;
 			}
 			else if (cell == destroyed) {
-				change_probs(x, col, row, -0.001, 0);
+				probss[row][col] = 0.0;
+				change_probs(x, col, row, destroyed_weight, 0, 0);
 			}
 		}
 	}
@@ -249,21 +291,60 @@ void probabilityPc::hard_version(std::vector<std::vector<bool>>& x, int& next_ro
 			early_return = 1;
 		}
 	}
+	std::vector<std::vector<bool>> x_copy = x;
 	foundhit = false;
-	for (int row = 0; row < 10; ++row) {
-		for (int col = 0; col < 10; ++col) {
+	for (int row = 0; row < 10; row++) {
+		for (int col = 0; col < 10; col++) {
 			char cell = map[row][col];
 			if (cell == miss) {
-				change_probs(x, col, row, -0.01, 0);
-			}
-			else if (cell == ship) {
+				change_probs(x_copy, col, row, missed_weight, 0, 0);
 			}
 			else if (cell == hit) {
-				change_probs(x, col, row, 3, 1);
+				x_copy[row][col] = 0;
+				change_probs(x_copy, col, row, hit_weight, 1, 0);
 				foundhit = true;
 			}
 			else if (cell == destroyed) {
-				change_probs(x, col, row, -0.001, 0);
+				change_probs(x_copy, col, row, destroyed_weight, 0, 0);
+			}
+		}
+	}
+	if (!foundhit) {
+		std::array<int, 4> ships_arr = { 2,3,4,5 };
+		for (int row = 0; row < 10; row++) {
+			for (int col = 0; col < 10; col++) {
+				if (map[row][col] == unused) {
+					for  (int i : shipsleft){
+						if (i > 0) {
+							if (Player1::validplacement(row, col, ships_arr[i], 1, x_copy)) {
+								for (int j = 0; j < ships_arr[i]; j++) {
+									probss[row][col + j] += (ships_arr[i] - j) * unused_weight;
+								}
+							}
+							else {
+								for (int j = 0; j < ships_arr[i]; j++) {
+									if (!(col + j >= 0 && col + j <= 9)) {
+										break;
+									}
+									probss[row][col + j] -= ((ships_arr[i] - j) * unused_weight) / hit_weight;
+								}
+							}
+							if (Player1::validplacement(row, col, ships_arr[i], 0, x_copy)) {
+								for (int j = 0; j < ships_arr[i]; j++) {
+									probss[row + j][col] += (ships_arr[i] - j) * unused_weight;
+								}
+							}
+							else {
+								for (int j = 0; j < ships_arr[i]; j++) {
+									if (!(row + j >= 0 && row + j <= 9)) {
+										break;
+									}
+									probss[row + j][col] -= ((ships_arr[i] - j) * unused_weight) / hit_weight;
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -277,7 +358,10 @@ void probabilityPc::hard_version(std::vector<std::vector<bool>>& x, int& next_ro
 		}
 		std::cin.get();
 	}
-	double max_prob = -1.0;
+	if (early_return) {
+		return;
+	}
+	double max_prob = std::numeric_limits<double>::lowest();
 	std::unordered_map<double, std::pair<int, int>> candidates;
 	for (int r = 0; r < 10; r++) {
 		for (int c = 0; c < 10; c++) {
@@ -289,84 +373,19 @@ void probabilityPc::hard_version(std::vector<std::vector<bool>>& x, int& next_ro
 			}
 		}
 	}
-	if (early_return) {
-		return;
-	}
+
 	next_row = candidates[max_prob].first;
 	next_col = candidates[max_prob].second;
-	if (!foundhit) {
-		if (zaehler == 2) {
-			double max_prob2 = -1.0;
-			std::unordered_map<double, std::pair<int, int>> candidates2;
-			for (int r = 9; r >= 0; r--) {
-				for (int c = 9; c >= 0; c--) {
-					if (!x[r][c]) {
-						if (probss[r][c] > max_prob2) {
-							max_prob2 = probss[r][c];
-						}
-						candidates2[probss[r][c]] = std::make_pair(r, c);
-					}
-				}
-			}
-			next_row = candidates2[max_prob2].first;
-			next_col = candidates2[max_prob2].second;
-		}
-		else if (zaehler == 3) {
-			double max_prob2 = -1.0;
-			std::unordered_map<double, std::pair<int, int>> candidates2;
-			for (int r = 0; r < 5; r++) {
-				for (int c = 0; c < 5; c++) {
-					if (!x[r][c]) {
-						if (probss[r][c] > max_prob2) {
-							max_prob2 = probss[r][c];
-						}
-						candidates2[probss[r][c]] = std::make_pair(r, c);
-					}
-				}
-			}
-			for (int r = 9; r > 4; r--) {
-				for (int c = 0; c < 5; c++) {
-					if (!x[r][c]) {
-						if (probss[r][c] > max_prob2) {
-							max_prob2 = probss[r][c];
-						}
-						candidates2[probss[r][c]] = std::make_pair(r, c);
-					}
-				}
-			}
-			for (int r = 0; r < 5; r++) {
-				for (int c = 9; c > 4; c--) {
-					if (!x[r][c]) {
-						if (probss[r][c] > max_prob2) {
-							max_prob2 = probss[r][c];
-						}
-						candidates2[probss[r][c]] = std::make_pair(r, c);
-					}
-				}
-			}
-			for (int r = 9; r > 4; r--) {
-				for (int c = 9; c > 4; c--) {
-					if (!x[r][c]) {
-						if (probss[r][c] > max_prob2) {
-							max_prob2 = probss[r][c];
-						}
-						candidates2[probss[r][c]] = std::make_pair(r, c);
-					}
-				}
-			}
-			next_row = candidates2[max_prob2].first;
-			next_col = candidates2[max_prob2].second;
-		}
-	}
+
 	zaehler++;
 	if (zaehler > 3) {
 		zaehler = 1;
 	}
 }
 
-void probabilityPc::impossible_version(std::vector<std::vector<bool>>& x, int& next_row, int&next_col){
+void probabilityPc::impossible_version(std::vector<std::vector<bool>>& x, int& next_row, int& next_col) {
 	std::bernoulli_distribution event(0.5);
-	if (event(randomengine)){
+	if (event(randomengine)) {
 		for (int row = 0; row < 10; ++row) {
 			for (int col = 0; col < 10; ++col) {
 				char cell = map[row][col];
@@ -378,7 +397,7 @@ void probabilityPc::impossible_version(std::vector<std::vector<bool>>& x, int& n
 			}
 		}
 	}
-	else{
+	else {
 		hard_version(x, next_row, next_col);
 	}
 }
@@ -387,48 +406,57 @@ void probabilityPc::impossible_version(std::vector<std::vector<bool>>& x, int& n
 
 
 
-void probabilityPc::change_probs(std::vector<std::vector<bool>>& x, int& col, int& row, double change, bool do_thething) {
-	probss[row][col] = 0.0;
-	if (row != 9) {
-		if (!x[(long long)row + 1][(long long)col]) {
-			probss[(long long)row + 1][(long long)col] += change;
+void probabilityPc::change_probs(std::vector<std::vector<bool>>& x, int& col, int& row, double change, bool do_thething, bool do_the_other_thing) {
+	if (do_the_other_thing) {
+
+
+	}
+	else {
+		probss[row][col] = 0;
+		if (row != 9) {
+			if (!x[(long long)row + 1][(long long)col]) {
+				probss[(long long)row + 1][(long long)col] += change;
+			}
+			if (map[(long long)row + 1][(long long)col] == hit && do_thething) {
+				if (row != 0 && !x[(long long)row - 1][(long long)col]) {
+					probss[(long long)row - 1][(long long)col] += 8;
+				}
+			}
 		}
-		if (map[(long long)row + 1][(long long)col] == hit && do_thething) {
-			if (row != 0 && !x[(long long)row - 1][(long long)col]) {
-				probss[(long long)row - 1][(long long)col] += 8;
+		if (col != 9) {
+			if (!x[(long long)row][(long long)col + 1]) {
+				probss[(long long)row][(long long)col + 1] += change;
+			}
+			if (map[(long long)row][(long long)col + 1] == hit && do_thething) {
+				if (col != 0 && !x[(long long)row][(long long)col - 1]) {
+					probss[(long long)row][(long long)col - 1] += 8;
+				}
+			}
+		}
+		if (row != 0) {
+			if (!x[(long long)row - 1][(long long)col]) {
+				probss[(long long)row - 1][(long long)col] += change;
+			}
+			if (map[(long long)row - 1][(long long)col] == hit && do_thething) {
+				if (row != 9 && !x[(long long)row + 1][(long long)col]) {
+					probss[(long long)row + 1][(long long)col] += 8;
+				}
+			}
+
+		}
+		if (col != 0) {
+			if (!x[(long long)row][(long long)col - 1]) {
+				probss[(long long)row][(long long)col - 1] += change;
+			}
+			if (map[(long long)row][(long long)col - 1] == hit && do_thething) {
+				if (col != 9 && !x[(long long)row][(long long)col + 1]) {
+					probss[(long long)row][(long long)col + 1] += 8;
+				}
 			}
 		}
 	}
-	if (col != 9) {
-		if (!x[(long long)row][(long long)col + 1]) {
-			probss[(long long)row][(long long)col + 1] += change;
-		}
-		if (map[(long long)row][(long long)col + 1] == hit && do_thething) {
-			if (col != 0 && !x[(long long)row][(long long)col - 1]) {
-				probss[(long long)row][(long long)col - 1] += 8;
-			}
-		}
-	}
-	if (row != 0) {
-		if (!x[(long long)row - 1][(long long)col]) {
-			probss[(long long)row - 1][(long long)col] += change;
-		}
-		if (map[(long long)row - 1][(long long)col] == hit && do_thething) {
-			if (row != 9 && !x[(long long)row + 1][(long long)col]) {
-				probss[(long long)row + 1][(long long)col] += 8;
-			}
-		}
-	}
-	if (col != 0) {
-		if (!x[(long long)row][(long long)col - 1]) {
-			probss[(long long)row][(long long)col - 1] += change;
-		}
-		if (map[(long long)row][(long long)col - 1] == hit && do_thething) {
-			if (col != 9 && !x[(long long)row][(long long)col + 1]) {
-				probss[(long long)row][(long long)col + 1] += 8;
-			}
-		}
-	}
+
+
 }
 // Pc1:                                                        Pc2:
 //  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |

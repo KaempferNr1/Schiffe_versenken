@@ -25,8 +25,12 @@ namespace std {
 class probabilityPc{
 	//std::map<probs, probs> probabilitys;
 public:
+	std::array<int, 4> shipsleft = { 0 };
 	std::mt19937_64 randomengine;
-
+	double unused_weight;
+	double hit_weight;
+	double destroyed_weight;
+	double missed_weight;
 	bool get_probs = 0;
 	std::vector<std::vector<bool>> boolmap = std::vector<std::vector<bool>>(10, std::vector<bool>(10, 0));
 	void (probabilityPc::*fptr)(std::vector<std::vector<bool>>& , int& , int& ) = nullptr; // das ist ein funktionspointer
@@ -52,7 +56,7 @@ public:
 	void medium_version(std::vector<std::vector<bool>>&, int&, int&);
 	void hard_version(std::vector<std::vector<bool>>&, int&, int&);
 	void impossible_version(std::vector<std::vector<bool>>&, int&, int&);
-	void change_probs(std::vector<std::vector<bool>>&, int& ,int& ,double, bool);
+	void change_probs(std::vector<std::vector<bool>>&, int& ,int& ,double, bool, bool);
 	probabilityPc(Draw&);
 	probabilityPc(Draw&,int);
 	probabilityPc();

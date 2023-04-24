@@ -6,8 +6,7 @@ void Computer::make_move(Draw& drawer, Player1& p2, int& wahlR, int& wahlS, bool
 		drawer.playermove(*this, p2, wahlR, wahlS, see_ships_left, see_ships_right, map2_true) ;
 	}
 	else{
-		prob->maxlength = p2.getsmallestshiplen(p2.shipsleft, 1);
-		prob->minlength = p2.getsmallestshiplen(p2.shipsleft, 0);
+		prob->shipsleft = this->shipsleft;
 		drawer.makemap(this->treffer, p2.eigeneschiffe, drawer.charptrs, 1, drawer.colors, dest_vec);
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {

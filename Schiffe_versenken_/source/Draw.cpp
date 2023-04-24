@@ -13,6 +13,7 @@ void Draw::drawMap(int x, std::vector<std::string>& map, bool mapp2_true) { // x
 	SetConsoleCursorInfo(console, &cursorInfo);
 	CONSOLE_SCREEN_BUFFER_INFO screen;
 	GetConsoleScreenBufferInfo(console, &screen);
+	
 	COORD pos = { 0, 0 };
 	pos.Y = 0;
 	pos.X = x;
@@ -23,7 +24,6 @@ void Draw::drawMap(int x, std::vector<std::string>& map, bool mapp2_true) { // x
 	int height = (int)map.size();
 	currentsize = screen.dwSize.X;
 	if (currentsize != lastsize) {
-		//	cout << "bitte die fontsize vom Terminal ändern";
 		system("color F");
 	}
 	for (int y = 0; y < height; y++) {
@@ -67,7 +67,6 @@ void Draw::setmakedrawmap(std::vector<std::string>& m2, std::string& x, _T& p1, 
 	//static_assert(std::is_same<_T, Player>::value || std::is_same<_T, Computer>::value, "argument 3 muss entweder vom Typ Player oder Computer sein");   // damit hier nicht die falschen argumente reinkommen
 	//static_assert(std::is_same<__T, Player>::value || std::is_same<__T, Computer>::value, "argument 4 muss entweder vom Typ Player oder Computer sein");
 	makemap(p2.treffer, p1.eigeneschiffe, charptrs, z, colors, dest1); // z und u sagen ob wir sehen sollen wo die schiffe sind
-
 	if (mapp2_true) { // wenn mapp2 im code benutzt wird dann wird das hier gemacht
 		makemap(p1.treffer, p2.eigeneschiffe, charptrs2, u, colors2, dest2);
 		setmap(mappp, mapp, m2, mapp3, x);
@@ -245,6 +244,7 @@ void Draw::drawCvC(Draw& drawer) {
 	bool show_weird_things = 0;
 	bool all_difficultys = 0;
 	int which_difficulty = 3;
+
 	if (debug) {
 		std::string gamestemp;
 
@@ -281,6 +281,8 @@ void Draw::drawCvC(Draw& drawer) {
 		wahlget(showtemp2, showtemp, 2);
 		show_weird_things = showtemp2 != 0;
 	}
+	bool except = 0;
+	std::array<std::pair<int, int>, 5> too_big_small = { std::make_pair(20,90), std::make_pair(10,55), std::make_pair(10,40), std::make_pair(9,20) , std::make_pair(1,1)};
 	for (int j = ((all_difficultys) ? 0 : which_difficulty - 1); j < ((all_difficultys) ? 4 : which_difficulty); j++) {
 		std::stringstream ss;
 		std::pair<int, int> wins = { 0,0 };
@@ -295,7 +297,10 @@ void Draw::drawCvC(Draw& drawer) {
 		std::chrono::milliseconds pause_duration(0);
 		std::chrono::high_resolution_clock::time_point start_pause;
 		std::chrono::high_resolution_clock::time_point end_pause;
-
+		double best_hit_weight = 0;
+		double best_unused_weight = 0;
+		double best_destroyed_weight = 0;
+		double best_missed_weight = 0;
 		for (int k = 0; k < games; k++) {
 			reset(drawer);
 			zahl = 0;
@@ -308,22 +313,35 @@ void Draw::drawCvC(Draw& drawer) {
 			pc1.trefferuebrig = 17;
 			pc2.trefferuebrig = 17;
 			while (!game_end) {
-				zaehler = gameloop(drawer, pc1, pc2, 1, 1, 1, 1, draw_map);
+				if ((int)(ds - prevds) / 2 > too_big_small[j].second  && show_weird_things) {
+					except = 1;
+				}
+				zaehler = gameloop(drawer, pc1, pc2, 1, 1, 1, 1, (draw_map || except));
 				ds++;
 				bigzahl++;
 			}
+			except = 0;
 			if (debug) {
-				(zaehler % 2) ? wins.second++ : wins.first++;
+				int which = zaehler%2;
+				(which) ? wins.second++ : wins.first++;
 				if (ds - prevds > hoechsteanzahl) {
 					hoechsteanzahl = (int)ds - (int)prevds;
 				}
 				if (ds - prevds < niedrigstzahl) {
 					niedrigstzahl = (int)ds - (int)prevds;
+					if (j == 2){
+						best_hit_weight			= ((which) ? pc2 : pc1).prob->hit_weight;
+						best_unused_weight		= ((which) ? pc2 : pc1).prob->unused_weight;
+						best_destroyed_weight	= ((which) ? pc2 : pc1).prob->destroyed_weight;
+						best_missed_weight		= ((which) ? pc2 : pc1).prob->missed_weight;
+					}
+
 				}
 				if (show_weird_things) {
-					if ((int)(ds - prevds) / 2 <= 10 || (int)(ds - prevds) / 2 > 68) {
+					if ((int)(ds - prevds) / 2 <= too_big_small[j].first || (int)(ds - prevds) / 2 > too_big_small[j].second) {
 						setmakedrawmap(mapp2, nthing, pc1, pc2, 1, 1, 0, 1);
 						cursPosSet(0, 25);
+						std::cout << "schwierigkeitsstuffe: " << dif[((all_difficultys) ? j : which_difficulty - 1)] << "\n";
 						std::cout << (ds - prevds) / 2 << ", " << wins.first + wins.second;
 						std::cout << "\n" << pc1.prob->numberofrandhits << ", " << pc2.prob->numberofrandhits << " ";
 						start_pause = std::chrono::high_resolution_clock::now();
@@ -370,6 +388,14 @@ void Draw::drawCvC(Draw& drawer) {
 				<< "\nwahrscheinlichkeit vom sieg fuer PC 1: " << (double)wins.first / games
 				<< "\nwahrscheinlichkeit vom sieg fuer PC 2: " << (double)wins.second / games
 				<< "\n";
+			if (j == 2){
+				ss << "die besten weights waren:" 
+				   << "\nhit: " << best_hit_weight 
+				   << "\nunused : " << best_unused_weight 
+				   << "\ndestroyed : " << best_destroyed_weight 
+				   << "\nmissed : " << best_missed_weight 
+				   << "\n";
+			}
 			if (days > 0) {
 				ss << "Tage: " << days << "; ";
 			}
@@ -559,7 +585,6 @@ void smallToBig(std::string& s) {
 }
 
 Draw::Draw() {
-	//24;
 	mapp = {
 		"Eigene Karte                                                 ",
 		"  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                  ",
@@ -715,28 +740,8 @@ Draw::Draw() {
 	cursorInfo.bVisible = false;
 	SetConsoleCursorInfo(console, &cursorInfo);
 	SetConsoleActiveScreenBuffer(console);
-	//hit = '*';
-	//destroyed = 'x'; // nur für Pv und CvC jetzt mach ich es doch für jeden modus3
-	//miss = 'o';
-	//unused = '~';
-	//ship = '#';
-	//vector<string> important  (5,"");
-	//important[0] = unused;
-	//important[1] = hit;
-	//important[2] = ship;
-	//important[3] = miss;
-	//important[4] = destroyed;
-	//for (int i = 0; i < 5; i++){
-	//	s2ws(important[i], 1);
-	//}
 	CONSOLE_SCREEN_BUFFER_INFO screen;
 	GetConsoleScreenBufferInfo(console, &screen);
-	//if (screen.dwSize.X < 170) {
-	//	cout << "bitte die momentane font size ändern";
-	//	while (screen.dwSize.X < 170) {
-	//
-	//	}
-	//}
 	lastsize = screen.dwSize.X;
 	if (randnumbermax <= 9) {
 		randnumbermax = 10;

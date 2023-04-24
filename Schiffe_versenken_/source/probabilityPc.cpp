@@ -310,9 +310,10 @@ void probabilityPc::hard_version(std::vector<std::vector<bool>>& x, int& next_ro
 		}
 	}
 	if (!foundhit) {
+		bool cont = 1;
 		std::array<int, 4> ships_arr = { 2,3,4,5 };
-		for (int row = 0; row < 10; row++) {
-			for (int col = 0; col < 10; col++) {
+		for (int row = 0; row < 10 && cont; row++) {
+			for (int col = 0; col < 10 && cont; col++) {
 				if (map[row][col] == unused) {
 					for  (int i : shipsleft){
 						if (i > 0) {
@@ -342,6 +343,8 @@ void probabilityPc::hard_version(std::vector<std::vector<bool>>& x, int& next_ro
 									probss[row + j][col] -= ((ships_arr[i] - j) * unused_weight) / hit_weight;
 								}
 							}
+							cont = false;
+							break;
 						}
 					}
 				}

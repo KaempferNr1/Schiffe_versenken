@@ -3,33 +3,35 @@
 #include "Player1.h"
 #include "probabilityPc.h"
 #include <memory>
-class Draw;
-class Computer : public Player1 {
-private:
-	//std::vector<std::vector<bool>> eigeneschiffe = {
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//	{0,0,0,0,0,0,0,0,0,0},
-	//};
+namespace battleships {
+	class Draw;
+	class Computer : public Player1 {
+	private:
+		//std::vector<std::vector<bool>> eigeneschiffe = {
+		//	{0,0,0,0,0,0,0,0,0,0},
+		//	{0,0,0,0,0,0,0,0,0,0},
+		//	{0,0,0,0,0,0,0,0,0,0},
+		//	{0,0,0,0,0,0,0,0,0,0},
+		//	{0,0,0,0,0,0,0,0,0,0},
+		//	{0,0,0,0,0,0,0,0,0,0},
+		//	{0,0,0,0,0,0,0,0,0,0},
+		//	{0,0,0,0,0,0,0,0,0,0},
+		//	{0,0,0,0,0,0,0,0,0,0},
+		//	{0,0,0,0,0,0,0,0,0,0},
+		//};
 
 
-	friend class Draw;
-	friend class Compare;
-	friend int main();
-	//friend class Player;
-public:
-	void make_move(Draw&, Player1&, int&, int&, bool, bool, bool, std::vector<std::vector<bool>>&) override;
-	void placeships(Draw&, HANDLE&) override;
-	Computer(Draw&);
-	Computer(Draw&,int);
-};
+		friend class Draw;
+		friend class Compare;
+		friend int main();
+		//friend class Player;
+	public:
+		void make_move(Draw&, Player1&, int&, int&, bool, bool, bool, std::vector<std::vector<bool>>&) override;
+		void placeships(Draw&, HANDLE&) override;
+		Computer(Draw&);
+		Computer(Draw&, int);
+	};
+}
 
 
 //interessante zahlen

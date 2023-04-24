@@ -9,11 +9,11 @@
 #include "headers\player.h"
 #include "headers\highscore.h"
 #include "headers\Compare.h"
-void clearscreen(Draw&);
+void clearscreen(battleships::Draw&);
 
 // min size damit es funktioniert 170
 int main() {
-	Draw drawer;	
+	battleships::Draw drawer;	
 	bool windowopen = true;
 	std::string auswahl_temp = "";
 	int auswahl = 4;
@@ -21,7 +21,7 @@ int main() {
 
 	//unique_ptr<> user;
 	while (windowopen) {
-		reset(drawer);
+		battleships::reset(drawer);
 		system("pause");
 		clearscreen(drawer);
 		drawer.wahlget(auswahl, auswahl_temp, 1);
@@ -51,7 +51,7 @@ int main() {
 	}
 	return 0;
 }
-void clearscreen(Draw& drawer) {
+void clearscreen(battleships::Draw& drawer) {
 	system("cls");
 	/*wstring w = L"                                                                                                                                                                          ";
 	system("color F");
@@ -73,22 +73,25 @@ void clearscreen(Draw& drawer) {
 	//pos.Y = 0;
 	//SetConsoleCursorPosition(drawer.console, pos);
 }
-void reset(Draw& drawer) {
-	drawer.zaehler = 0;
-	*drawer.charptrs3[3][0] = '1';
-	*drawer.charptrs3[2][0] = '2';
-	*drawer.charptrs3[1][0] = '1';
-	*drawer.charptrs3[0][0] = '1';
-	*drawer.charptrs3[3][1] = '1';
-	*drawer.charptrs3[2][1] = '2';
-	*drawer.charptrs3[1][1] = '1';
-	*drawer.charptrs3[0][1] = '1';
-	for (int i = 0; i < sizefield; i++) {
-		for (int k = 0; k < sizefield; k++) {
-			drawer.charptrs[i][k][0] = unused;
-			drawer.charptrs2[i][k][0] = unused;
-			drawer.dest1[i][k] = 0;
-			drawer.dest2[i][k] = 0;
+namespace battleships {
+	using namespace battleships;
+	void reset(Draw& drawer) {
+		drawer.zaehler = 0;
+		*drawer.charptrs3[3][0] = '1';
+		*drawer.charptrs3[2][0] = '2';
+		*drawer.charptrs3[1][0] = '1';
+		*drawer.charptrs3[0][0] = '1';
+		*drawer.charptrs3[3][1] = '1';
+		*drawer.charptrs3[2][1] = '2';
+		*drawer.charptrs3[1][1] = '1';
+		*drawer.charptrs3[0][1] = '1';
+		for (int i = 0; i < global::sizefield; i++) {
+			for (int k = 0; k < global::sizefield; k++) {
+				drawer.charptrs[i][k][0] = global::unused;
+				drawer.charptrs2[i][k][0] = global::unused;
+				drawer.dest1[i][k] = 0;
+				drawer.dest2[i][k] = 0;
+			}
 		}
 	}
 }

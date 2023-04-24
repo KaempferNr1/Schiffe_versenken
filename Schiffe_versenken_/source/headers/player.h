@@ -8,23 +8,23 @@
 #include "Draw.h"
 //#include "computer.h"
 #include "Player1.h"
-#include "probabilityPc.h"
+namespace battleships {
+	class Player : public Player1 {
+	private:
 
-class Player : public Player1 {
-private:
 
-
-	friend class Draw;
-	friend class Compare;
-	friend int main();
-public:
-	void make_move(Draw&, Player1&, int&, int&, bool, bool, bool, std::vector<std::vector<bool>>&) override;
-	void placeships(Draw&, HANDLE&) override;
-	Player(Draw&);
-	Player(Draw&, int);
-	//void movemaker(int&, int&, int, Draw&);
-	//void hitmanager(int&, int&, int, Draw&);
-};
+		friend class Draw;
+		friend class Compare;
+		friend int main();
+	public:
+		void make_move(Draw&, Player1&, int&, int&, bool, bool, bool, std::vector<std::vector<bool>>&) override;
+		void placeships(Draw&, HANDLE&) override;
+		Player(Draw&);
+		Player(Draw&, int);
+		//void movemaker(int&, int&, int, Draw&);
+		//void hitmanager(int&, int&, int, Draw&);
+	};
+}
 
 /*
 	#include <chrono>

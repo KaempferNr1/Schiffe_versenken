@@ -140,7 +140,7 @@ bool Player1::validmove(int& x, int& y, std::vector<std::vector<bool>>& ships) {
 	}
 	return valid(ships, x, y);
 }
-bool Player1::validplacement(int& y, int& x, int& leng, bool is_horizontal, std::vector<std::vector<bool>>& shipss) {
+bool Player1::validplacement(int& y, int& x, int leng, bool is_horizontal, std::vector<std::vector<bool>>& shipss) {
 	bool checker = 1;
 	int z = 0;
 	int t = 0;

@@ -135,18 +135,14 @@ int Draw::gameloop(Draw& drawer, Player1& p1, Player1& p2, bool z, bool x, bool 
 		cursPosSet(0, 25);
 	}
 	cursPosSet(24, 25);
-	if (c) {
-		if (zaehler % 2 == 0) { // ist gleich 0 wenn spieler 1 drann ist so nach der logik
-			zaehler = gamecheck(p1, p2, wahlR, wahlS);
-
-		}
-		else {
-			zaehler = gamecheck(p2, p1, wahlR, wahlS);
-		}
-	}
-	else { 
+	
+	if (zaehler % 2 == 0 || !c) { // ist gleich 0 wenn spieler 1 drann ist so nach der logik
 		zaehler = gamecheck(p1, p2, wahlR, wahlS);
 	}
+	else {
+		zaehler = gamecheck(p2, p1, wahlR, wahlS);
+	}
+	
 	zahl++;
 	return zaehler;
 }
@@ -961,3 +957,5 @@ wahrscheinlichkeit vom sieg fuer PC 1: 0.517546
 wahrscheinlichkeit vom sieg fuer PC 2: 0.482454
 
 */
+
+

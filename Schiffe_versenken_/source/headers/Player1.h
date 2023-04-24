@@ -59,7 +59,7 @@ public:
 	int trefferuebrig = 17;
 	void shipmanager();
 	bool validmove(int&, int&, std::vector<std::vector<bool>>&);
-	static bool validplacement(int&, int&, int&, bool, std::vector<std::vector<bool>>&);
+	static bool validplacement(int&, int&, int, bool, std::vector<std::vector<bool>>&);
 	void resettonormal(Draw&);
 	int getshipsiz(int&, int&, int&, int&, Draw&);
 	void test(Draw&);

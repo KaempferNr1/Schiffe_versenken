@@ -15,7 +15,10 @@
 //	select_next_guess(,y, x);
 //}
 
-probabilityPc::probabilityPc(Draw& drawer) {
+#define if_schleife(a,c) if(a){while((c)){
+#define else_schleife(a) else{ while((a)){
+#define else_if_schleife(a,c){{ else if((a)){while((c)){
+probabilityPc::probabilityPc(Draw & drawer) {
 	randomengine = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
 	dptr = &drawer;
 	std::uniform_real_distribution<double> for_weight_destroyed_missed(-5, 5);
@@ -25,12 +28,11 @@ probabilityPc::probabilityPc(Draw& drawer) {
 	missed_weight = for_weight_destroyed_missed(randomengine);
 	unused_weight = for_weight_hit_unused(randomengine);
 	this->fptr = &probabilityPc::hard_version;
-
 }
 probabilityPc::probabilityPc(Draw& drawer, int x) {
 	randomengine = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
 	dptr = &drawer;
-	std::uniform_real_distribution<double> for_weight_destroyed_missed(-5, -0.01);
+	std::uniform_real_distribution<double> for_weight_destroyed_missed(-5, -0.001);
 	std::uniform_real_distribution<double> for_weight_hit(1, 10);
 	std::uniform_real_distribution<double> for_weight_unused(1, 10);
 	switch (x) {
@@ -310,41 +312,43 @@ void probabilityPc::hard_version(std::vector<std::vector<bool>>& x, int& next_ro
 		}
 	}
 	if (!foundhit) {
-		bool cont = 1;
 		std::array<int, 4> ships_arr = { 2,3,4,5 };
-		for (int row = 0; row < 10 && cont; row++) {
-			for (int col = 0; col < 10 && cont; col++) {
+		std::unordered_map<int, int> shipps;
+		for (int i = 0; i < 4; i++) {
+			shipps[ships_arr[i]] = shipsleft[i];
+		}
+		bool cont = 1;
+		for (int row = 0; row < 10; row++) {
+			for (int col = 0; col < 10; col++) {
 				if (map[row][col] == unused) {
-					for  (int i : shipsleft){
-						if (i > 0) {
-							if (Player1::validplacement(row, col, ships_arr[i], 1, x_copy)) {
-								for (int j = 0; j < ships_arr[i]; j++) {
-									probss[row][col + j] += (ships_arr[i] - j) * unused_weight;
+					for (auto& [shiplen, shipleft] : shipps) {
+						if (shipleft) {
+							if (Player1::validplacement(row, col, shiplen, 1, x_copy)) {
+								for (int j = 0; j < shiplen; j++) {
+									probss[row][col + j] += (shiplen - j) * unused_weight;
 								}
 							}
-							else {
-								for (int j = 0; j < ships_arr[i]; j++) {
-									if (!(col + j >= 0 && col + j <= 9)) {
-										break;
-									}
-									probss[row][col + j] -= ((ships_arr[i] - j) * unused_weight) / hit_weight;
+						else {
+							for (int j = 0; j < shiplen; j++) {
+								if (!(col + j >= 0 && col + j <= 9)) {
+									break;
+								}
+								probss[row][col + j] -= ((shiplen - j) * unused_weight) / hit_weight;
+							}
+						}
+						if (Player1::validplacement(row, col, shiplen, 0, x_copy)) {
+							for (int j = 0; j < shiplen; j++) {
+								probss[row + j][col] += (shiplen - j) * unused_weight;
+							}
+						}
+						else {
+							for (int j = 0; j < shiplen; j++) {
+								if (!(row + j >= 0 && row + j <= 9)) {
+									break;
+								}
+								probss[row + j][col] -= ((shiplen - j) * unused_weight) / hit_weight;
 								}
 							}
-							if (Player1::validplacement(row, col, ships_arr[i], 0, x_copy)) {
-								for (int j = 0; j < ships_arr[i]; j++) {
-									probss[row + j][col] += (ships_arr[i] - j) * unused_weight;
-								}
-							}
-							else {
-								for (int j = 0; j < ships_arr[i]; j++) {
-									if (!(row + j >= 0 && row + j <= 9)) {
-										break;
-									}
-									probss[row + j][col] -= ((ships_arr[i] - j) * unused_weight) / hit_weight;
-								}
-							}
-							cont = false;
-							break;
 						}
 					}
 				}

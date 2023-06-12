@@ -10,8 +10,10 @@
 
 #include <Windows.h>
 
-namespace battleships {
-	namespace global {
+namespace battleships 
+{
+	namespace global 
+	{
 		constexpr const int sizefield = 10;
 		constexpr const char hit = '*';
 		constexpr const char destroyed = 'x'; // nur für Pv und CvC jetzt mach ich es doch für jeden modus3

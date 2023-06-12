@@ -9,23 +9,25 @@
 #include "headers\player.h"
 #include "headers\highscore.h"
 #include "headers\Compare.h"
+
 void clearscreen(battleships::Draw&);
 
 // min size damit es funktioniert 170
-int main() {
-	battleships::Draw drawer;	
+int main() 
+{
+	battleships::Draw drawer;
 	bool windowopen = true;
 	std::string auswahl_temp = "";
 	int auswahl = 4;
 	srand((unsigned int)std::chrono::system_clock::now().time_since_epoch().count());
-
-	//unique_ptr<> user;
-	while (windowopen) {
+	while (windowopen) 
+	{
 		battleships::reset(drawer);
 		system("pause");
 		clearscreen(drawer);
 		drawer.wahlget(auswahl, auswahl_temp, 1);
-		switch (auswahl)	{
+		switch (auswahl)	
+		{
 		case 1:
 			drawer.drawPvP(drawer);
 			break;
@@ -51,31 +53,14 @@ int main() {
 	}
 	return 0;
 }
-void clearscreen(battleships::Draw& drawer) {
+void clearscreen(battleships::Draw& drawer) 
+{
 	system("cls");
-	/*wstring w = L"                                                                                                                                                                          ";
-	system("color F");
-	DWORD bytesWritten = 0;
-	CONSOLE_SCREEN_BUFFER_INFO screen;
-	GetConsoleScreenBufferInfo(drawer.console, &screen);
-	COORD pos = { 0,0 };
-	int width = screen.dwSize.X;
-	if ((unsigned)width > w.size()) {
-		for (int q = 0; q < (signed int)(width - w.size()); q++) {
-			w = w + L" ";
-		}
-	}
-	for (int i = 0; i < 26; i++) {
-		pos.Y = i;
-	*///WriteConsoleOutputCharacterW(drawer.console, w.c_str(), (DWORD)w.length() - 1, pos, &bytesWritten); //hier beschreibe ich das terminal
-	//}
-	//pos.X = 0;
-	//pos.Y = 0;
-	//SetConsoleCursorPosition(drawer.console, pos);
 }
-namespace battleships {
-	using namespace battleships;
-	void reset(Draw& drawer) {
+namespace battleships 
+{
+	void reset(Draw& drawer) 
+	{
 		drawer.zaehler = 0;
 		*drawer.charptrs3[3][0] = '1';
 		*drawer.charptrs3[2][0] = '2';
@@ -85,8 +70,10 @@ namespace battleships {
 		*drawer.charptrs3[2][1] = '2';
 		*drawer.charptrs3[1][1] = '1';
 		*drawer.charptrs3[0][1] = '1';
-		for (int i = 0; i < global::sizefield; i++) {
-			for (int k = 0; k < global::sizefield; k++) {
+		for (int i = 0; i < global::sizefield; i++) 
+		{
+			for (int k = 0; k < global::sizefield; k++)
+			{
 				drawer.charptrs[i][k][0] = global::unused;
 				drawer.charptrs2[i][k][0] = global::unused;
 				drawer.dest1[i][k] = 0;
@@ -95,19 +82,3 @@ namespace battleships {
 		}
 	}
 }
-//void cursorInvis(HANDLE& console){
-//	CONSOLE_CURSOR_INFO cursorInfo;
-//	console = GetStdHandle(STD_OUTPUT_HANDLE);
-//	GetConsoleCursorInfo(console, &cursorInfo);
-//	cursorInfo.bVisible = false;
-//	SetConsoleCursorInfo(console, &cursorInfo);
-//	SetConsoleActiveScreenBuffer(console);
-//}
-//void cursorVis(HANDLE& console) {
-//	CONSOLE_CURSOR_INFO cursorInfo;
-//	console = GetStdHandle(STD_OUTPUT_HANDLE);
-//	GetConsoleCursorInfo(console, &cursorInfo);
-//	cursorInfo.bVisible = true;
-//	SetConsoleCursorInfo(console, &cursorInfo);
-//	SetConsoleActiveScreenBuffer(console);
-//}

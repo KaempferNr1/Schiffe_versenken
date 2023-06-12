@@ -1,16 +1,19 @@
 #pragma once
 #include "global.h"
 
-namespace battleships {
+namespace battleships 
+{
 	class Player1;
 
-	class Draw{
-		std::vector<std::string> moeglichkeiten = {
-		"Player vs Player\n",
-		"Single Player(random placement von schiffen mit highscore)\n",
-		"Player vs Computer\n",
-		"Computer vs Computer\n",
-		"Ausloggen\n"
+	class Draw
+	{
+	private:
+		std::vector<std::string> moeglichkeiten = 
+		{
+			"Player vs Player\n",
+			"Single Player(random placement von schiffen mit highscore)\n",
+			"Player vs Computer\n",
+			"Computer vs Computer\n",
 		};
 		std::string temp = "Waehlen sie die Reihe: ";
 		std::string temp2 = "Waehlen sie die Spalte: ";
@@ -23,7 +26,6 @@ namespace battleships {
 		std::vector<std::string> mappp = std::vector<std::string>(48, "");
 		std::vector<std::string> emptyvec = std::vector<std::string>(24, "");
 		std::string nthing = "";
-		//std::string importante = "";
 		bool game_end = 0;
 
 		//{22, 3}
@@ -59,8 +61,7 @@ namespace battleships {
 		void drawCvC(Draw&);
 		void setmap(std::vector<std::string>&, std::vector<std::string>&, std::vector<std::string>&, std::vector<std::string>&, std::string&);
 		void cursPosSet(int, int);
-		template<typename _T, typename __T>
-		void setmakedrawmap(std::vector<std::string>&, std::string&, _T&, __T&, bool, bool, int, bool);
+		void setmakedrawmap(std::vector<std::string>&, std::string&, Player1&, Player1&, bool, bool, int, bool);
 		void setansig(std::string&);
 		void wahlget(int&, std::string&, int);
 		void makemap(std::vector<std::vector<bool>>&, std::vector<std::vector<bool>>&, std::vector<std::vector<char*>>&, bool, std::vector<std::vector<WORD>>& colors, std::vector<std::vector<bool>>&);
@@ -68,10 +69,6 @@ namespace battleships {
 		void mostlikelysq(Draw&);
 
 		void isdestroyed(Draw&, Player1&, Player1&, std::vector<std::vector<bool>>&);
-
-
-		template<typename _T, typename __T>
-		void pcmove(Draw&, _T&, __T&, int&, int&);
 
 		void playermove(Player1&, Player1&, int&, int&, bool, bool, bool);
 

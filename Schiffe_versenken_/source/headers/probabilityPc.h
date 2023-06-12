@@ -6,27 +6,38 @@
 
 
 
-struct probs {
+struct probs 
+{
 	int y;
 	int x;
 	double probability;
-	bool operator<(const probs& other) const {
+	bool operator<(const probs& other) const 
+	{
 		return probability > other.probability;
 	}
 };
-namespace std {
+namespace std 
+{
 	template<>
-	struct hash<probs> {
-		size_t operator()(const probs& key) {
+	struct hash<probs> 
+	{
+		size_t operator()(const probs& key) 
+		{
 			return hash<double>()(key.probability);
 		}
 	};
 }
-namespace battleships {
+namespace battleships 
+{
 	class Draw;
-	class probabilityPc {
+	class probabilityPc
+	{
 		//std::map<probs, probs> probabilitys;
 	public:
+		probabilityPc(Draw&);
+		probabilityPc(Draw&, int);
+		probabilityPc();
+		~probabilityPc();
 		std::array<int, 4> shipsleft = { 0 };
 		std::mt19937_64 randomengine;
 		double unused_weight;
@@ -36,12 +47,6 @@ namespace battleships {
 		bool get_probs = 0;
 		std::vector<std::vector<bool>> boolmap = std::vector<std::vector<bool>>(10, std::vector<bool>(10, 0));
 		void (probabilityPc::* fptr)(std::vector<std::vector<bool>>&, int&, int&) = nullptr; // das ist ein funktionspointer
-		void testing() {
-			int x = 0;
-			int y = 0;
-			(this->*fptr)(boolmap, x, y);
-			std::cout << x << y;
-		}
 		int maxlength = 5;
 		int minlength = 2;
 		int zaehler = 1;
@@ -58,11 +63,9 @@ namespace battleships {
 		void medium_version(std::vector<std::vector<bool>>&, int&, int&);
 		void hard_version(std::vector<std::vector<bool>>&, int&, int&);
 		void impossible_version(std::vector<std::vector<bool>>&, int&, int&);
+
 		void change_probs(std::vector<std::vector<bool>>&, int&, int&, double, bool, bool);
-		probabilityPc(Draw&);
-		probabilityPc(Draw&, int);
-		probabilityPc();
-		~probabilityPc();
+		
 
 	};
 }

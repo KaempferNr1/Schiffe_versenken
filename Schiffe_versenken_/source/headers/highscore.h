@@ -2,25 +2,34 @@
 #include "global.h"
 #include <ranges>
 #include <algorithm>
-namespace battleships {
-	class User {
+namespace battleships 
+{
+	class User 
+	{
 	private:
-
+	
 	public:
+		std::string user_name;
 		User() {};
 		~User() {};
 	};
-	class Highscore {
+	class Highscore
+	{
 	public:
-		void higherscore(int zahl) {
+		static void higherscore(int zahl) 
+		{
 			int score = 0;
 			std::ofstream fout("score.txt");
 			std::ifstream fin("score.txt");
 			fin >> score;
-			if (score < zahl) {
+			int highscore = score;
+			if (score < zahl)
+			{
+				highscore = zahl;
 				fout << zahl;
-				std::cout << "neuer highscore: " << zahl;
 			}
+			std::cout << "High score: " << highscore << '\n';
+			std::cout << "Your score: " << zahl << '\n';
 			fout.close();
 			fin.close();
 		}

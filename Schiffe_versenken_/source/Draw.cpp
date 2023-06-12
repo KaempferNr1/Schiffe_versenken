@@ -1,13 +1,13 @@
+#include <sstream>
 #include "headers/Draw.h"
 #include "headers/Player1.h"
 #include "headers/computer.h"
 #include "headers/player.h"
-#include <sstream>
-//#if defined(_WIN32) || defined(_WIN64) 
-//int currentsize = 0;
-//int lastsize = 0;
-namespace battleships {
-	void Draw::drawMap(int x, std::vector<std::string>& map, bool mapp2_true) { // x ist die verschiebung von der ganzen map nach rechts 
+#include "headers/highscore.h"
+namespace battleships 
+{
+	void Draw::drawMap(int x, std::vector<std::string>& map, bool map2_true) 
+	{ // x ist die verschiebung von der ganzen map nach rechts 
 		CONSOLE_CURSOR_INFO cursorInfo;
 		GetConsoleCursorInfo(console, &cursorInfo);
 		cursorInfo.bVisible = false;
@@ -18,35 +18,44 @@ namespace battleships {
 		COORD pos = { 0, 0 };
 		pos.Y = 0;
 		pos.X = x;
-		DWORD bytesWritten1 = 0; //DWORD ist ein unsigned long ich schreibe hier aber DWORD weil es so einfache ist zwischen Win Api und anderen sachen zu unterscheiden
+		DWORD bytesWritten1 = 0; //DWORD ist ein unsigned long ich schreibe hier aber DWORD weil es so einfacher ist zwischen Win Api und anderen sachen zu unterscheiden
 		DWORD bytesWritten2 = 0;
 		DWORD bytesWritten3 = 0;
 		WORD z = 15;
 		int height = (int)map.size();
 		currentsize = screen.dwSize.X;
-		if (currentsize != lastsize) {
+		if (currentsize != lastsize)
+		{
 			system("color F");
 		}
-		for (int y = 0; y < height; y++) {
+		for (int y = 0; y < height; y++)
+		{
 			std::wstring outputstr = s2ws(map[y], 1); // hier mache ich aus dem string vom vektor<string> map am index y ein wide string. Wide strings sind strings aus 2 byte großen chars.
 			pos.Y = y;								  // hier sage ich, dass die coordinate pos 1 nach unten geht
 			pos.X = x;								  // das ist für die rechtsverschiebung
 			WriteConsoleOutputCharacter(console, outputstr.c_str(), (DWORD)outputstr.length() - 1, pos, &bytesWritten1); //hier beschreibe ich das terminal
-			if (y < 10) { //
-				for (int i = 0; i < 10; i++) {
+			//WriteConsoleOutputAttribute(console, &z, (DWORD)outputstr.length() - 1, pos, &bytesWritten2);
+			if (y < 10) // hier ist der teil wo ich Farben zuweise
+			{ 
+				for (int i = 0; i < 10; i++)
+				{
 					COORD copycord = coords[y][i];
 					copycord.X += x;
 					WORD c1 = colors[y][i]; //ich hatte ein paar probleme hier wenn ich einfach colors[y][i] in die function WriteConsoleOutputAttribute gebe gab es ein paar bugs
 					WORD c2 = colors2[y][i];
-					WriteConsoleOutputAttribute(console, &c1, 1, copycord, &bytesWritten2);
-					if (mapp2_true) {
+					WriteConsoleOutputAttribute(console, &c1, 1, copycord, &bytesWritten2); // die parameter sind : handle, WORD* (für die farbe), DWORD (für die anzahl an zeichen) ,
+																							// COORD (für die position), und LPDWORD (für die anzahl an bytes die geschrieben worden sind
+					if (map2_true) // wenn map 2 (die rechte karte) nicht gezeichnet wird soll da ja auch keine farbe hin
+					{
 						WriteConsoleOutputAttribute(console, &c2, 1, coords2[y][i], &bytesWritten2);
 					}
 				}
-				if (y < 5) {
+				if (y < 5) 
+				{
 					COORD c = coords3[y];
 					c.X += x;
-					if (!mapp2_true) {
+					if (!map2_true)
+					{
 						c.X = c.X - 61;  //61 ist die größe von einer reihe von mapp2
 					}
 					WriteConsoleOutputAttribute(console, &colors3[y], 1, c, &bytesWritten2);
@@ -57,33 +66,34 @@ namespace battleships {
 		lastsize = currentsize;
 	}
 
-	void Draw::cursPosSet(int x, int y) {
+	void Draw::cursPosSet(int x, int y) 
+	{
 		COORD cursorpos = { 0,0 };
 		cursorpos.X = x; cursorpos.Y = y;
 		SetConsoleCursorPosition(console, cursorpos);
 	}
-
-	template<typename _T, typename __T>
-	void Draw::setmakedrawmap(std::vector<std::string>& m2, std::string& x, _T& p1, __T& p2, bool z, bool u, int x2, bool mapp2_true) { // die funktion macht erstmal die ganze karte und dann fügt sie diese zusammen und schließlich  
-		//static_assert(std::is_same<_T, Player>::value || std::is_same<_T, Computer>::value, "argument 3 muss entweder vom Typ Player oder Computer sein");   // damit hier nicht die falschen argumente reinkommen
-		//static_assert(std::is_same<__T, Player>::value || std::is_same<__T, Computer>::value, "argument 4 muss entweder vom Typ Player oder Computer sein");
-		makemap(p2.treffer, p1.eigeneschiffe, charptrs, z, colors, dest1); // z und u sagen ob wir sehen sollen wo die schiffe sind
-		if (mapp2_true) { // wenn mapp2 im code benutzt wird dann wird das hier gemacht
-			makemap(p1.treffer, p2.eigeneschiffe, charptrs2, u, colors2, dest2);
+	void Draw::setmakedrawmap(std::vector<std::string>& m2, std::string& x, Player1& p1, Player1& p2, bool see_ships_left, bool see_ships_right, int x_offset, bool map2_true)
+	{ // die funktion macht erstmal die ganze karte und dann fügt sie diese zusammen und schließlich  
+		makemap(p2.treffer, p1.eigeneschiffe, charptrs, see_ships_left, colors, dest1); // z und u sagen ob wir sehen sollen wo die schiffe sind
+		if (map2_true)
+		{ // wenn mapp2 im code benutzt wird dann wird das hier gemacht
+			makemap(p1.treffer, p2.eigeneschiffe, charptrs2, see_ships_right, colors2, dest2);
 			setmap(mappp, mapp, m2, mapp3, x);
 		}
-		else {
+		else 
+		{
 			setmap(mappp, mapp, emptyvec, mapp3, x);
 		}
 		// x ist ein string der je nach nutzen anders ist
 		// mappp ist die gesamte karte die gezeigt wird mapp3 ist das stück wo die legende zu sehen ist
 		// mapp ist ein stueck der karte welche immer gezeigt werden muss
-		drawMap(x2, mappp, mapp2_true);    //x2 ist wie weit das ganze konstrukt nach rechts verschoben wird
+		drawMap(x_offset, mappp, map2_true);    //x2 ist wie weit das ganze konstrukt nach rechts verschoben wird
 	}
 	int zahl = 0;
 
 
-	int Draw::gameloop(Draw& drawer, Player1& p1, Player1& p2, bool z, bool x, bool y, bool c, bool draw_map) {
+	int Draw::gameloop(Draw& drawer, Player1& p1, Player1& p2, bool see_ships_left, bool see_ships_right, bool map2_true, bool c, bool draw_map)
+	{
 		//der erste bool sagt ob man die schiffe in der linken map sehen kann
 		//der zweite bool sagt ob man die schiffe in der rechten map sehen kann
 		//der dritte bool sagt ob die rechte map ueberhaupt existiert
@@ -92,55 +102,69 @@ namespace battleships {
 		int wahlS = 0;
 		int wahlR = 0;
 		std::string wahl_temp;
-		if (c) { // wenn immer die gleiche map seien soll
-			if (zaehler % 2 == 0) { // is 0 wenn spieler 1 dran ist
-				do {
-					p1.make_move(drawer, p2, wahlR, wahlS, z, x, y, dest2);
+		if (c) 
+		{ // wenn immer die gleiche map seien soll
+			if (zaehler % 2 == 0) 
+			{ // is 0 wenn spieler 1 dran ist
+				do 
+				{
+					p1.make_move(drawer, p2, wahlR, wahlS, see_ships_left, see_ships_right, map2_true, dest2);
 				} while (!p1.validmove(wahlR, wahlS, p1.treffer));
 				p1.treffer[wahlR][wahlS] = 1;
 			}
-			else {
-				do {
-					p2.make_move(drawer, p1, wahlR, wahlS, z, x, y, dest1);
+			else 
+			{
+				do 
+				{
+					p2.make_move(drawer, p1, wahlR, wahlS, see_ships_left, see_ships_right, map2_true, dest1);
 				} while (!p2.validmove(wahlR, wahlS, p2.treffer));
 				p2.treffer[wahlR][wahlS] = 1;
 			}
 			isdestroyed(drawer, p1, p2, dest1);
 			isdestroyed(drawer, p2, p1, dest2);
-			for (int j = 0; j < 4; j++) {
+			for (int j = 0; j < 4; j++)
+			{
 				*charptrs3[j][0] = p1.shipsleft[(long long)3 - j] + 48;
 				*charptrs3[j][1] = p2.shipsleft[(long long)3 - j] + 48;
 			}
-			if (draw_map) {
-				setmakedrawmap(mapp2, nthing, p1, p2, z, x, 0, y);
+			if (draw_map)
+			{
+				setmakedrawmap(mapp2, nthing, p1, p2, see_ships_left, see_ships_right, 0, map2_true);
 			}
 		}
-		else {
-			do {
-				p1.make_move(drawer, p2, wahlR, wahlS, z, x, y, dest1);
+		else
+		{
+			do 
+			{
+				p1.make_move(drawer, p2, wahlR, wahlS, see_ships_left, see_ships_right, map2_true, dest1);
 			} while (!p1.validmove(wahlR, wahlS, p1.treffer));
 			p1.treffer[wahlR][wahlS] = 1;
-			if (zaehler % 2 == 0) {
+			if (zaehler % 2 == 0) 
+			{
 				isdestroyed(drawer, p1, p2, dest1);
 				isdestroyed(drawer, p2, p1, dest2);
 			}
-			else {
+			else 
+			{
 				isdestroyed(drawer, p1, p2, dest2);
 				isdestroyed(drawer, p2, p1, dest1);
 			}
-			for (int j = 0; j < 4; j++) {
+			for (int j = 0; j < 4; j++) 
+			{
 				*charptrs3[j][0] = p1.shipsleft[(long long)3 - j] + 48;
 				*charptrs3[j][1] = p2.shipsleft[(long long)3 - j] + 48;
 			}
-			setmakedrawmap(mapp2, temp2, p1, p2, 0, 0, 0, y);
+			setmakedrawmap(mapp2, temp2, p1, p2, false, false, 0, map2_true);
 			cursPosSet(0, 25);
 		}
 		cursPosSet(24, 25);
 
-		if (zaehler % 2 == 0 || !c) { // ist gleich 0 wenn spieler 1 drann ist so nach der logik
+		if (zaehler % 2 == 0 || !c)
+		{ // ist gleich 0 wenn spieler 1 drann ist so nach der logik
 			zaehler = gamecheck(p1, p2, wahlR, wahlS);
 		}
-		else {
+		else 
+		{
 			zaehler = gamecheck(p2, p1, wahlR, wahlS);
 		}
 
@@ -148,61 +172,76 @@ namespace battleships {
 		return zaehler;
 	}
 
-	int Draw::gamecheck(Player1& p1, Player1& p2, int& y, int& x) {
-		if (p1.treffer[y][x] == 1 && p2.eigeneschiffe[y][x] == 1) {
+	int Draw::gamecheck(Player1& p1, Player1& p2, int& y, int& x) 
+	{
+		if (p1.treffer[y][x] == 1 && p2.eigeneschiffe[y][x] == 1) 
+		{
 			p1.trefferuebrig--;
-			if (p1.trefferuebrig == 0) {
+			if (p1.trefferuebrig == 0) 
+			{
 				game_end = true;
 			}
 		}
-		else {
+		else 
+		{
 			zaehler++;
 		}
 		return zaehler;
 	}
-	void Draw::drawPvP(Draw& drawer) {
+	void Draw::drawPvP(Draw& drawer) 
+	{
 		zahl = 0;
 		int n = 0;
 		int m = 1;
 		zaehler = 0;
 		game_end = false;
 		std::array<Player, 2> players = { drawer,drawer };
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 2; i++) 
+		{
 			players[i].placeships(drawer, console);
 		}
-		while (!game_end) {
-			if (zaehler % 2 == 0) {
+		while (!game_end) 
+		{
+			if (zaehler % 2 == 0) 
+			{
 				m = 1; n = 0;
 			}
-			else {
+			else 
+			{
 				m = 0; n = 1;
 			}
 			zaehler = gameloop(drawer, players[n], players[m], 1, 0, 1, 0, 1);
 		}
 	}
 
-	void Draw::drawPv(battleships::Draw& drawer) {
+	void Draw::drawPv(battleships::Draw& drawer) 
+	{
 		zahl = 0;
 		zaehler = 0;
 		game_end = false;
-		battleships::Computer pc(drawer);
-		pc.placeships(drawer, console);
+		battleships::Player pc(drawer);
+		pc.pc_placeships(drawer, console);
 		pc.trefferuebrig = 17;
 		mapp[0] = "Gegner Schiffe                                               ";
-		while (!game_end) {
+		while (!game_end)
+		{
 			zaehler = gameloop(*this, pc, pc, 0, 0, 0, 0, 1);
-			zahl++;
 		}
 		cursPosSet(0, 25);
+		system("pause");
+		system("cls");
+		battleships::Highscore::higherscore(zahl);
 		mapp[0] = "Eigene Karte                                                 ";
 		system("pause");
 	}
 
-	void Draw::drawPvC(Draw& drawer) {
+	void Draw::drawPvC(Draw& drawer) 
+	{
 		std::string which_difficulty_temp;
 		int which_difficulty = 0;
 		system("cls");
-		do {
+		do 
+		{
 			cursPosSet(0, 0);
 			std::cout << "gegen welchen schwierigkeitsgrad möchtest du spielen\neinfach(1)\nmedium(2)\nschwer(3)\n";
 			std::cout << "      ";
@@ -217,14 +256,16 @@ namespace battleships {
 		pc1.placeships(drawer, console);
 		p1.placeships(drawer, console);
 		setmakedrawmap(mapp2, nthing, p1, pc1, 1, 1, 0, 1);
-		while (!game_end) {
+		while (!game_end) 
+		{
 			zaehler = gameloop(drawer, p1, pc1, 1, 0, 1, 1, 1);
 		}
 		setmakedrawmap(mapp2, nthing, p1, pc1, 1, 1, 0, 1);
 	}
 
-	void Draw::drawCvC(Draw& drawer) {
-		mapp[0] = "Computer 1                                                   ";
+	void Draw::drawCvC(Draw& drawer) 
+	{
+		mapp[0]  = "Computer 1                                                   ";
 		mapp2[0] = "Computer 2                                                   ";
 		bool debug = (((0 == 0) == 1) != 0);
 		{
@@ -242,7 +283,8 @@ namespace battleships {
 		bool all_difficultys = 0;
 		int which_difficulty = 3;
 
-		if (debug) {
+		if (debug) 
+		{
 			std::string gamestemp;
 
 			std::string drawtemp;
@@ -255,17 +297,20 @@ namespace battleships {
 			int all_difficultys_temp2 = 0;
 
 			std::string which_difficulty_temp;
-			do {
+			do
+			{
 				cursPosSet(0, 10);
-				std::cout << "wie viele durchläufe?\n";
+				std::cout << "wie viele durchl\x84ufe?\n";
 				wahlget(games, gamestemp, 2);
 			} while (games <= 0);
 
 			std::cout << "sollen alle schwierigkeitsstufen getestet werden?\nja(1)\nnein(0)\n";
 			wahlget(all_difficultys_temp2, all_difficultys_temp, 2);
 			all_difficultys = all_difficultys_temp2 != 0;
-			if (!all_difficultys) {
-				do {
+			if (!all_difficultys) 
+			{
+				do 
+				{
 					cursPosSet(0, 16);
 					std::cout << "welche schwierigkeit soll getestet werden?\neinfach(1)\nmedium(2)\nschwer(3)\nunmoeglich(4)\n";
 					wahlget(which_difficulty, which_difficulty_temp, 2);
@@ -274,13 +319,14 @@ namespace battleships {
 			std::cout << "soll die map gezeichnet werden?\nja(1)\nnein(0)\n";
 			wahlget(drawtemp2, drawtemp, 2);
 			draw_map = drawtemp2 != 0;
-			std::cout << "sollen unregelmäßig hohe oder niedrige anzahl an zuegen angezeigt werden \nja(1)\nnein(0)\n";
+			std::cout << "sollen unregelm\x84\xE1ig hohe oder niedrige anzahl an zuegen angezeigt werden \nja(1)\nnein(0)\n";
 			wahlget(showtemp2, showtemp, 2);
 			show_weird_things = showtemp2 != 0;
 		}
 		bool except = 0;
 		std::array<std::pair<int, int>, 5> too_big_small = { std::make_pair(20,90), std::make_pair(10,55), std::make_pair(10,40), std::make_pair(9,20) , std::make_pair(1,1) };
-		for (int j = ((all_difficultys) ? 0 : which_difficulty - 1); j < ((all_difficultys) ? 4 : which_difficulty); j++) {
+		for (int j = ((all_difficultys) ? 0 : which_difficulty - 1); j < ((all_difficultys) ? 4 : which_difficulty); j++)
+		{
 			std::stringstream ss;
 			std::pair<int, int> wins = { 0,0 };
 			double ds = 0.0;
@@ -294,53 +340,101 @@ namespace battleships {
 			std::chrono::milliseconds pause_duration(0);
 			std::chrono::high_resolution_clock::time_point start_pause;
 			std::chrono::high_resolution_clock::time_point end_pause;
+
 			double best_hit_weight = 0;
 			double best_unused_weight = 0;
 			double best_destroyed_weight = 0;
 			double best_missed_weight = 0;
-			for (int k = 0; k < games; k++) {
+
+			double worst_hit_weight = 0;
+			double worst_unused_weight = 0;
+			double worst_destroyed_weight = 0;
+			double worst_missed_weight = 0;
+
+			std::unique_ptr<Computer> pc1 = std::make_unique<Computer>(drawer, j + 1);
+			std::unique_ptr<Computer> pc2 = std::make_unique<Computer>(drawer, j + 1);
+			pc1->placeships(drawer, console);
+			pc2->placeships(drawer, console);
+
+			for (int k = 0; k < games; k++) 
+			{
+				
+				game_end = false;
 				reset(drawer);
 				zahl = 0;
-				zaehler = 0;
-				game_end = false;
-				Computer pc1(drawer, j + 1);
-				Computer pc2(drawer, j + 1);
-				pc1.placeships(drawer, console);
-				pc2.placeships(drawer, console);
-				pc1.trefferuebrig = 17;
-				pc2.trefferuebrig = 17;
-				while (!game_end) {
-					if ((int)(ds - prevds) / 2 > too_big_small[j].second && show_weird_things) {
+				zaehler = 0; 
+				if (j == 2)
+				{
+					pc1->shipsleft = { 1,2,1,1 };
+					pc2->shipsleft = { 1,2,1,1 };
+					pc1->schiffeuebrig = 5;
+					pc2->schiffeuebrig = 5;
+					for (int i = 0; i < 5; i++)
+					{
+						pc1->shipsplacement[i].destroyed = false;
+						pc2->shipsplacement[i].destroyed = false;
+					}
+					pc1->trefferuebrig = 17;
+					pc2->trefferuebrig = 17;
+					pc1->treffer = std::vector<std::vector<bool>>(10, std::vector<bool>(10, 0));
+					pc2->treffer = std::vector<std::vector<bool>>(10, std::vector<bool>(10, 0));
+					pc1->prob = std::make_unique<probabilityPc>(drawer, j + 1);
+					pc2->prob = std::make_unique<probabilityPc>(drawer, j + 1);
+				}
+				else
+				{
+					pc1 = std::make_unique<Computer>(drawer, j + 1);
+					pc2 = std::make_unique<Computer>(drawer, j + 1);
+					pc1->placeships(drawer, console);
+					pc2->placeships(drawer, console);
+				}
+				while (!game_end) 
+				{
+					if ((int)(ds - prevds) / 2 > too_big_small[j].second && show_weird_things) 
+					{
 						except = 1;
 					}
-					zaehler = gameloop(drawer, pc1, pc2, 1, 1, 1, 1, (draw_map || except));
+					zaehler = gameloop(drawer, *pc1, *pc2, 1, 1, 1, 1, (draw_map || except));
 					ds++;
 					bigzahl++;
 				}
 				except = 0;
-				if (debug) {
+				if (debug) 
+				{
 					int which = zaehler % 2;
 					(which) ? wins.second++ : wins.first++;
-					if (ds - prevds > hoechsteanzahl) {
+					if (ds - prevds > hoechsteanzahl) 
+					{
 						hoechsteanzahl = (int)ds - (int)prevds;
+						if (j == 2)
+						{
+							worst_hit_weight = ((which) ? pc2 : pc1)->prob->hit_weight;
+							worst_unused_weight = ((which) ? pc2 : pc1)->prob->unused_weight;
+							worst_destroyed_weight = ((which) ? pc2 : pc1)->prob->destroyed_weight;
+							worst_missed_weight = ((which) ? pc2 : pc1)->prob->missed_weight;
+						}
 					}
-					if (ds - prevds < niedrigstzahl) {
+					if (ds - prevds < niedrigstzahl) 
+					{
 						niedrigstzahl = (int)ds - (int)prevds;
-						if (j == 2) {
-							best_hit_weight = ((which) ? pc2 : pc1).prob->hit_weight;
-							best_unused_weight = ((which) ? pc2 : pc1).prob->unused_weight;
-							best_destroyed_weight = ((which) ? pc2 : pc1).prob->destroyed_weight;
-							best_missed_weight = ((which) ? pc2 : pc1).prob->missed_weight;
+						if (j == 2) 
+						{
+							best_hit_weight = ((which) ? pc2 : pc1)->prob->hit_weight;
+							best_unused_weight = ((which) ? pc2 : pc1)->prob->unused_weight;
+							best_destroyed_weight = ((which) ? pc2 : pc1)->prob->destroyed_weight;
+							best_missed_weight = ((which) ? pc2 : pc1)->prob->missed_weight;
 						}
 
 					}
-					if (show_weird_things) {
-						if ((int)(ds - prevds) / 2 <= too_big_small[j].first || (int)(ds - prevds) / 2 > too_big_small[j].second) {
-							setmakedrawmap(mapp2, nthing, pc1, pc2, 1, 1, 0, 1);
+					if (show_weird_things) 
+					{
+						if ((int)(ds - prevds) / 2 <= too_big_small[j].first || (int)(ds - prevds) / 2 > too_big_small[j].second)
+						{
+							setmakedrawmap(mapp2, nthing, *pc1, *pc2, 1, 1, 0, 1);
 							cursPosSet(0, 25);
 							std::cout << "schwierigkeitsstuffe: " << dif[((all_difficultys) ? j : which_difficulty - 1)] << "\n";
 							std::cout << (ds - prevds) / 2 << ", " << wins.first + wins.second;
-							std::cout << "\n" << pc1.prob->numberofrandhits << ", " << pc2.prob->numberofrandhits << " ";
+							std::cout << "\n" << pc1->prob->numberofrandhits << ", " << pc2->prob->numberofrandhits << " ";
 							start_pause = std::chrono::high_resolution_clock::now();
 							system("pause");
 							end_pause = std::chrono::high_resolution_clock::now();
@@ -348,22 +442,26 @@ namespace battleships {
 							cursPosSet(0, 25);
 						}
 					}
-					if (draw_map) {
+					if (draw_map) 
+					{
 						cursPosSet(0, 25);
 					}
-					else {
+					else 
+					{
 						cursPosSet(0, 29);
 					}
-					randtreffer1 += pc1.prob->numberofrandhits;
-					randtreffer2 += pc2.prob->numberofrandhits;
+					randtreffer1 += pc1->prob->numberofrandhits;
+					randtreffer2 += pc2->prob->numberofrandhits;
 					prevds = ds;
 				}
 			}
 
-			if (debug) {
+			if (debug)
+			{
 				std::chrono::high_resolution_clock::time_point end_time = std::chrono::high_resolution_clock::now();
 				std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds>((end_time - (start_time + pause_duration)));
-				if (!all_difficultys) {
+				if (!all_difficultys) 
+				{
 					system("pause");
 					cursPosSet(0, 0);
 					system("cls");
@@ -374,32 +472,42 @@ namespace battleships {
 				int minutes = (duration.count() / (60 * 1000)) % 60;
 				int seconds = (duration.count() / 1000) % 60;
 				int milliseconds = duration.count() % 1000;
-				ss << "anzahl aller 'runden' " << bigzahl
-					<< "\nanzahl rand treffer pc1:" << randtreffer1
-					<< "\nanzahl rand treffer pc2:" << randtreffer2
-					<< "\ndie hoechste anzahl fuer ein spiel war: " << hoechsteanzahl / 2
-					<< "\ndie niedrigste anzahl fuer ein spiel war: " << niedrigstzahl / 2
-					<< "\nder durchschnitt fuer ein spiel war: " << ds / 2
-					<< "\nsiege von PC 1: " << wins.first
-					<< "\nsiege von Pc 2: " << wins.second
-					<< "\nwahrscheinlichkeit vom sieg fuer PC 1: " << (double)wins.first / games
-					<< "\nwahrscheinlichkeit vom sieg fuer PC 2: " << (double)wins.second / games
-					<< "\n";
-				if (j == 2) {
+				ss << "anzahl aller 'runden' "							<< bigzahl
+				   << "\nanzahl rand treffer pc1:"						<< randtreffer1
+				   << "\nanzahl rand treffer pc2:"						<< randtreffer2
+				   << "\ndie hoechste anzahl fuer ein spiel war: "		<< hoechsteanzahl / 2
+				   << "\ndie niedrigste anzahl fuer ein spiel war: "	<< niedrigstzahl / 2
+				   << "\nder durchschnitt fuer ein spiel war: "			<< ds / 2
+				   << "\nsiege von PC 1: "								<< wins.first
+				   << "\nsiege von Pc 2: "								<< wins.second
+				   << "\nwahrscheinlichkeit vom sieg fuer PC 1: "		<< (double)wins.first / games
+				   << "\nwahrscheinlichkeit vom sieg fuer PC 2: "		<< (double)wins.second / games
+				   << "\n";
+				if (j == 2) 
+				{
 					ss << "die besten weights waren:"
-						<< "\nhit: " << best_hit_weight
-						<< "\nunused : " << best_unused_weight
-						<< "\ndestroyed : " << best_destroyed_weight
-						<< "\nmissed : " << best_missed_weight
-						<< "\n";
+					   << "\nhit: "			<< best_hit_weight
+					   << "\nunused : "		<< best_unused_weight
+					   << "\ndestroyed : "	<< best_destroyed_weight
+					   << "\nmissed : "		<< best_missed_weight
+					   << "\n";
+					ss << "die schlechtesten weights waren:"
+					   << "\nhit: "			<< worst_hit_weight
+					   << "\nunused : "		<< worst_unused_weight
+					   << "\ndestroyed : "	<< worst_destroyed_weight
+					   << "\nmissed : "		<< worst_missed_weight
+					   << "\n";
 				}
-				if (days > 0) {
+				if (days > 0) 
+				{
 					ss << "Tage: " << days << "; ";
 				}
-				if (hours > 0 || days > 0) {
+				if (hours > 0 || days > 0) 
+				{
 					ss << "Stunden: " << hours << "; ";
 				}
-				if (minutes > 0 || hours > 0 || days > 0) {
+				if (minutes > 0 || hours > 0 || days > 0) 
+				{
 					ss << "Minuten: " << minutes << "; ";
 				}
 				ss << "Sekunden: " << seconds << "; Millisekunden: " << milliseconds;
@@ -408,7 +516,8 @@ namespace battleships {
 			}
 		}
 		std::cout << "\n";
-		for (unsigned char i = 0; i < output.size(); i++) {
+		for (unsigned char i = 0; i < output.size(); i++) 
+		{
 			std::cout << "schwierigkeitsstuffe: " << dif[((all_difficultys) ? i : which_difficulty - 1)] << "\n";
 			std::cout << output[i] << "\n";
 		}
@@ -416,24 +525,30 @@ namespace battleships {
 		mapp2[0] = "Gegner Karte                                                ";
 	}
 
-	void Draw::setmap(std::vector<std::string>& result, std::vector<std::string>& mp1, std::vector<std::string>& mp2, std::vector<std::string>& mp3, std::string& x) {
+	void Draw::setmap(std::vector<std::string>& result, std::vector<std::string>& mp1, std::vector<std::string>& mp2, std::vector<std::string>& mp3, std::string& x)
+	{
 		std::string temp;
 		CONSOLE_SCREEN_BUFFER_INFO screen;
 		GetConsoleScreenBufferInfo(console, &screen);
 		std::vector<int> temp2;
-		for (size_t i = 0; i < mp1.size(); i++) {
+		for (size_t i = 0; i < mp1.size(); i++) 
+		{
 			result[i] = "";
 			result[i] = map1 + mp1[i] + mp2[i] + mp3[i];
 		}
 		result[25] = x;
 		int width = screen.dwSize.X;
-		if (width == lastsize) {
+		if (width == lastsize)
+		{
 			width = (int)result[1].size();
 		}
-		for (int k = 0; k < (int)result.size(); k++) {
+		for (int k = 0; k < (int)result.size(); k++) 
+		{
 			temp = "";
-			if ((unsigned)width > result[k].size()) {
-				for (int q = 0; q < (signed int)(width - result[k].size()); q++) {
+			if ((unsigned)width > result[k].size())
+			{
+				for (int q = 0; q < (signed int)(width - result[k].size()); q++) 
+				{
 					temp = temp + " ";
 				}
 			}
@@ -443,15 +558,19 @@ namespace battleships {
 
 
 
-	void Draw::setansig(std::string& x) {
+	void Draw::setansig(std::string& x) 
+	{
 
 	}
 
-	void Draw::wahlget(int& auswahl, std::string& as, int x) {
+	void Draw::wahlget(int& auswahl, std::string& as, int x)
+	{
 		//system("cls");
-		if (x == 1) {
+		if (x == 1)
+		{
 			//system("cls");
-			for (size_t i = 0; i < moeglichkeiten.size(); i++) {
+			for (size_t i = 0; i < moeglichkeiten.size(); i++) 
+			{
 				std::cout << "\t" << i + 1 << "\t" << moeglichkeiten[i];
 			}
 		}
@@ -460,7 +579,8 @@ namespace battleships {
 		return;
 	}
 
-	std::wstring s2ws(const std::string& s, bool isUtf8) { //diesen code habe ich von stackoverflow kopiert also werde ich ihn nicht erklären
+	std::wstring s2ws(const std::string& s, bool isUtf8) 
+	{ //diesen code habe ich von stackoverflow kopiert also werde ich ihn nicht erklären
 		int len;
 		int slength = (int)s.length() + 1;
 		len = MultiByteToWideChar(isUtf8 ? CP_UTF8 : CP_ACP, 0, s.c_str(), slength, 0, 0);
@@ -470,26 +590,35 @@ namespace battleships {
 		return buf;
 	}
 
-	void Draw::makemap(std::vector<std::vector<bool>>& hits, std::vector<std::vector<bool>>& ships, std::vector<std::vector<char*>>& charptrs, bool z, std::vector<std::vector<WORD>>& colorss, std::vector<std::vector<bool>>& destroyedvec) {
-		for (int i = 0; i < global::sizefield; i++) {
-			for (int k = 0; k < global::sizefield; k++) {
-				if (destroyedvec[i][k]) {
+	void Draw::makemap(std::vector<std::vector<bool>>& hits, std::vector<std::vector<bool>>& ships, std::vector<std::vector<char*>>& charptrs,
+					   bool see_ships, std::vector<std::vector<WORD>>& colorss, std::vector<std::vector<bool>>& destroyedvec)
+	{
+		for (int i = 0; i < global::sizefield; i++)
+		{
+			for (int k = 0; k < global::sizefield; k++)
+			{
+				if (destroyedvec[i][k]) 
+				{
 					*charptrs[i][k] = global::destroyed;
 					colorss[i][k] = global::destroyedc;
 				}
-				else if (hits[i][k] == 1 && ships[i][k] == 0) {
+				else if (hits[i][k] == 1 && ships[i][k] == 0) 
+				{
 					*charptrs[i][k] = global::miss;
 					colorss[i][k] = global::missedc;
 				}
-				else if ((hits[i][k] == 0 && ships[i][k] == 1) && z) {
+				else if ((hits[i][k] == 0 && ships[i][k] == 1) && see_ships)
+				{
 					*charptrs[i][k] = global::ship;
 					colorss[i][k] = global::shipc;
 				}
-				else if (hits[i][k] == 1 && ships[i][k] == 1) {
+				else if (hits[i][k] == 1 && ships[i][k] == 1)
+				{
 					*charptrs[i][k] = global::hit;
 					colorss[i][k] = global::hitc;
 				}
-				else {
+				else
+				{
 					*charptrs[i][k] = global::unused;
 					colorss[i][k] = global::unusedc;
 				}
@@ -497,14 +626,18 @@ namespace battleships {
 		}
 	}
 
-	int stoii(std::string& a, int x) {
+	int stoii(std::string& a, int x) 
+	{
 		int resultInt = 0;
 		int xy = (x == 48) ? 57 : (x == 65) ? 90 : 97;
-		if (x == 65) {
+		if (x == 65) 
+		{
 			smallToBig(a);
 		}
-		for (char k : a) {
-			if ((int)k >= x && (int)k <= xy) {
+		for (char k : a) 
+		{
+			if ((int)k >= x && (int)k <= xy) 
+			{
 
 				resultInt = ((int)k - x) + resultInt * 10;
 			}
@@ -513,76 +646,89 @@ namespace battleships {
 		return resultInt;
 	}
 
-	void Draw::isdestroyed(Draw& drawer, Player1& p1, Player1& p2, std::vector<std::vector<bool>>& dest) {
-		for (int integ = 0; integ < 4; integ++) {
+	void Draw::isdestroyed(Draw& drawer, Player1& p1, Player1& p2, std::vector<std::vector<bool>>& dest) 
+	{
+		for (int integ = 0; integ < 4; integ++)
+		{
 			p1.shipsleft[3 - integ] = 1;
 		}
 		p1.shipsleft[1] = 2;
 		p1.schiffeuebrig = 5;
-		for (int r = 0; r < 10; r++) {
-			for (int c = 0; c < 10; c++) {
+		for (int r = 0; r < 10; r++) 
+		{
+			for (int c = 0; c < 10; c++) 
+			{
 				dest[r][c] = 0;
 			}
 		}
-		for (int i = 0; i < 5; i++) {
-			if (p1.shipsplacement[i].destroyed == 0) {
+		for (int i = 0; i < 5; i++)
+		{
+			if (p1.shipsplacement[i].destroyed == 0) 
+			{
 				bool checker = 1;
-				for (int k = 0; k < p1.shipsplacement[i].length && checker; k++) {
-					if (p2.treffer[p1.shipsplacement[i].shipsplaces[k].Y][p1.shipsplacement[i].shipsplaces[k].X]) {
+				for (int k = 0; k < p1.shipsplacement[i].length && checker; k++) 
+				{
+					if (p2.treffer[p1.shipsplacement[i].shipsplaces[k].Y][p1.shipsplacement[i].shipsplaces[k].X])
+					{
 						checker = 1;
 					}
-					else {
+					else 
+					{
 						checker = 0;
 					}
 				}
-				if (checker) {
+				if (checker) 
+				{
 					p1.schiffeuebrig--;
 					p1.shipsplacement[i].destroyed = 1;
 					p1.shipsleft[p1.shipsplacement[i].length - 2] = p1.shipsleft[p1.shipsplacement[i].length - 2] - 1;
-					for (int j = 0; j < p1.shipsplacement[i].length; j++) {
+					for (int j = 0; j < p1.shipsplacement[i].length; j++) 
+					{
 						dest[p1.shipsplacement[i].shipsplaces[j].Y][p1.shipsplacement[i].shipsplaces[j].X] = 1;
 					}
 				}
 			}
-			else {
+			else 
+			{
 				p1.schiffeuebrig--;
 				p1.shipsleft[p1.shipsplacement[i].length - 2]--;
-				for (int j = 0; j < p1.shipsplacement[i].length; j++) {
+				for (int j = 0; j < p1.shipsplacement[i].length; j++) 
+				{
 					dest[p1.shipsplacement[i].shipsplaces[j].Y][p1.shipsplacement[i].shipsplaces[j].X] = 1;
 				}
 			}
 		}
 	}
 
-
-	template<typename _T, typename __T>
-	void Draw::pcmove(Draw&, _T&, __T&, int&, int&) {
-
-
-	}
-
-	void Draw::playermove(Player1& p1, Player1& p2, int& wahlR, int& wahlS, bool x, bool y, bool z) {
+	void Draw::playermove(Player1& p1, Player1& p2, int& wahlR, int& wahlS, bool see_ships_left, bool see_ships_right, bool map2_true)
+	{
 		std::string wahl_temp;
 		std::string wahl_temp2;
-		setmakedrawmap(mapp2, temp, p1, p2, x, y, 0, z);
+		setmakedrawmap(mapp2, temp, p1, p2, see_ships_left, see_ships_right, 0, map2_true);
 		cursPosSet(24, 25);
 		wahlget(wahlR, wahl_temp, 0);
-		setmakedrawmap(mapp2, temp2, p1, p2, x, y, 0, z);
+		setmakedrawmap(mapp2, temp2, p1, p2, see_ships_left, see_ships_right, 0, map2_true);
 		cursPosSet(24, 25);
 		wahlget(wahlS, wahl_temp, 2);
 		cursPosSet(24, 25);
 	}
-	void smallToBig(std::string& s) {
+
+	void smallToBig(std::string& s) 
+	{
 		size_t length = s.size();
-		for (size_t i = 0; i < length; i++) {
-			if (s[i] >= 'a' && s[i] <= 'z') {
+		for (size_t i = 0; i < length; i++) 
+		{
+			if (s[i] >= 'a' && s[i] <= 'z') 
+			{
 				s[i] = (s[i] - 32);
 			}
 		}
 	}
 
-	Draw::Draw() {
-		mapp = {
+	Draw::Draw() 
+	{
+		mapp = 
+		{
 			"Eigene Karte                                                 ",
 			"  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                  ",
 			"---------------------------------------------                ",
@@ -609,7 +755,8 @@ namespace battleships {
 			"  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                  "
 		};
 		mapp.shrink_to_fit();
-		mapp2 = {
+		mapp2 = 
+		{
 		   "Gegner Karte                                                 ",
 		   "  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                  ",
 		   "---------------------------------------------                ",
@@ -636,7 +783,8 @@ namespace battleships {
 		   "  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                  "
 		};
 		mapp2.shrink_to_fit();
-		mapp3 = {
+		mapp3 = 
+		{
 		   "                                ",
 		   "Legende:                        ",
 		   "                                ",
@@ -669,7 +817,8 @@ namespace battleships {
 		mapp3[7][0] = global::ship;
 		mapp3[9][0] = global::miss;
 		mapp3[11][0] = global::destroyed;
-		charptrs = {
+		charptrs = 
+		{
 			{&mapp[3][4],&mapp[3][8],&mapp[3][12],&mapp[3][16],&mapp[3][20], &mapp[3][24], &mapp[3][28], &mapp[3][32], &mapp[3][36], &mapp[3][40]},
 			{&mapp[5][4],&mapp[5][8],&mapp[5][12],&mapp[5][16],&mapp[5][20], &mapp[5][24], &mapp[5][28], &mapp[5][32], &mapp[5][36], &mapp[5][40]},
 			{&mapp[7][4],&mapp[7][8],&mapp[7][12],&mapp[7][16],&mapp[7][20], &mapp[7][24], &mapp[7][28], &mapp[7][32], &mapp[7][36], &mapp[7][40]},
@@ -695,14 +844,16 @@ namespace battleships {
 			{&mapp2[21][4],&mapp2[21][8],&mapp2[21][12],&mapp2[21][16],&mapp2[21][20], &mapp2[21][24], &mapp2[21][28], &mapp2[21][32], &mapp2[21][36], &mapp2[21][40]},
 		};
 		charptrs2.shrink_to_fit();
-		charptrs3 = {
+		charptrs3 =
+		{
 			{&mapp3[17][8],&mapp3[17][25]},
 			{&mapp3[18][8],&mapp3[18][25]},
 			{&mapp3[19][8],&mapp3[19][25]},
 			{&mapp3[20][8],&mapp3[20][25]}
 		};
 		charptrs3.shrink_to_fit();
-		coords = {
+		coords = 
+		{
 			{{20,3},{24,3},{28,3},{32,3},{36,3},{40,3},{44,3},{48,3},{52,3},{56,3}},
 			{{20,5},{24,5},{28,5},{32,5},{36,5},{40,5},{44,5},{48,5},{52,5},{56,5}},
 			{{20,7},{24,7},{28,7},{32,7},{36,7},{40,7},{44,7},{48,7},{52,7},{56,7}},
@@ -715,7 +866,8 @@ namespace battleships {
 			{{20,21},{24,21},{28,21},{32,21},{36,21},{40,21},{44,21},{48,21},{52,21},{56,21}}
 		};
 		coords.shrink_to_fit();
-		coords2 = {
+		coords2 = 
+		{
 			{{81,3},{85,3},{89,3},{93,3},{97,3},{101,3},{105,3},{109,3},{113,3},{117,3}},
 			{{81,5},{85,5},{89,5},{93,5},{97,5},{101,5},{105,5},{109,5},{113,5},{117,5}},
 			{{81,7},{85,7},{89,7},{93,7},{97,7},{101,7},{105,7},{109,7},{113,7},{117,7}},
@@ -728,7 +880,14 @@ namespace battleships {
 			{{81,21},{85,21},{89,21},{93,21},{97,21},{101,21},{105,21},{109,21},{113,21},{117,21}}
 		};
 		coords2.shrink_to_fit();
-		coords3 = { { 138 ,3},{138 ,5},{138 ,7},{138 ,9},{138, 11} };
+		coords3 = 
+		{
+			{ 138 ,3},
+			{138 ,5},
+			{138 ,7},
+			{138 ,9},
+			{138, 11}
+		};
 		coords3.shrink_to_fit();
 		console = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -740,7 +899,8 @@ namespace battleships {
 		CONSOLE_SCREEN_BUFFER_INFO screen;
 		GetConsoleScreenBufferInfo(console, &screen);
 		lastsize = screen.dwSize.X;
-		if (global::randnumbermax <= 9) {
+		if (global::randnumbermax <= 9) 
+		{
 			global::randnumbermax = 10;
 		}
 	}
@@ -748,7 +908,8 @@ namespace battleships {
 
 
 
-	void Draw::mostlikelysq(Draw& drawer) {
+	void Draw::mostlikelysq(Draw& drawer) 
+	{
 		//Computer pc;
 		//int anzahl = 0;
 		system("cls");
@@ -898,32 +1059,46 @@ namespace battleships {
 			}
 
 		};
-		std::vector<std::vector<std::vector<double>>> wahrscheinlichkeiten = std::vector<std::vector<std::vector<double>>>(9, std::vector<std::vector<double>>(10, std::vector<double>(10, 0.0)));
+		std::vector<std::vector<std::vector<double>>> 
+		wahrscheinlichkeiten = std::vector<std::vector<std::vector<double>>>(9, std::vector<std::vector<double>>(10, std::vector<double>(10, 0.0)));
 		std::vector<int> zahlen = { 1000, 100000, 1000000, 100000, 10000000, 100000, 1000000 , 10000000, 100000000 };
 		std::vector<std::vector<double>> endwahrscheinlichkeit = std::vector<std::vector<double>>(10, std::vector<double>(10, 0.0));
-		for (int q = 0; q < 9; q++) {
-			for (int rows = 0; rows < 10; rows++) {
-				for (int cols = 0; cols < 10; cols++) {
+		for (int q = 0; q < 9; q++) 
+		{
+			for (int rows = 0; rows < 10; rows++) 
+			{
+				for (int cols = 0; cols < 10; cols++) 
+				{
 					wahrscheinlichkeiten[q][rows][cols] = (double)durchleaufe[q][rows][cols] / zahlen[q];
 				}
 			}
 		}
 
-		for (int rows2 = 0; rows2 < 10; rows2++) {
-			for (int cols2 = 0; cols2 < 10; cols2++) {
-				endwahrscheinlichkeit[rows2][cols2] = (wahrscheinlichkeiten[0][rows2][cols2] + wahrscheinlichkeiten[1][rows2][cols2] + wahrscheinlichkeiten[2][rows2][cols2] + wahrscheinlichkeiten[3][rows2][cols2] + wahrscheinlichkeiten[4][rows2][cols2] + wahrscheinlichkeiten[5][rows2][cols2] + wahrscheinlichkeiten[6][rows2][cols2] + wahrscheinlichkeiten[7][rows2][cols2] + wahrscheinlichkeiten[8][rows2][cols2]) / 9;
+		for (int rows2 = 0; rows2 < 10; rows2++)
+		{
+			for (int cols2 = 0; cols2 < 10; cols2++)
+			{
+				endwahrscheinlichkeit[rows2][cols2] =  (wahrscheinlichkeiten[0][rows2][cols2] + 
+				wahrscheinlichkeiten[1][rows2][cols2] + wahrscheinlichkeiten[2][rows2][cols2] + 
+				wahrscheinlichkeiten[3][rows2][cols2] + wahrscheinlichkeiten[4][rows2][cols2] + 
+				wahrscheinlichkeiten[5][rows2][cols2] + wahrscheinlichkeiten[6][rows2][cols2] + 
+				wahrscheinlichkeiten[7][rows2][cols2] + wahrscheinlichkeiten[8][rows2][cols2]) / 9;
 			}
 		}
 
-		for (int z2 = 0; z2 < 10; z2++) {
-			for (int y2 = 0; y2 < 9; y2++) {
+		for (int z2 = 0; z2 < 10; z2++) 
+		{
+			for (int y2 = 0; y2 < 9; y2++)
+			{
 				std::cout << endwahrscheinlichkeit[z2][y2] << " , ";
 			}
 			std::cout << endwahrscheinlichkeit[z2][9] << "\n";
 		}
 		std::cout << "\n";
-		for (int z3 = 0; z3 < 10; z3++) {
-			for (int y3 = 0; y3 < 9; y3++) {
+		for (int z3 = 0; z3 < 10; z3++)
+		{
+			for (int y3 = 0; y3 < 9; y3++) 
+			{
 				std::cout << endwahrscheinlichkeit[z3][y3] * 100 << "% , ";
 			}
 			std::cout << endwahrscheinlichkeit[z3][9] * 100 << "%\n";

@@ -1,12 +1,14 @@
 #pragma once
 #include "global.h"
 #include "probabilityPc.h"
-namespace battleships {
+namespace battleships 
+{
 	class Draw;
 	class Computer;
 	class Player;
 
-	class ships {
+	class ships 
+	{
 	private:
 		int x = 0;
 		int y = 0;
@@ -21,9 +23,11 @@ namespace battleships {
 	};
 
 
-	class Player1 {
+	class Player1 
+	{
 	protected:
-		std::vector<std::vector<bool>> eigeneschiffe = {
+		std::vector<std::vector<bool>> eigeneschiffe = 
+		{
 			{0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0},
@@ -39,11 +43,13 @@ namespace battleships {
 		friend class Player;
 		friend class Computer;
 	public:
-		std::unique_ptr<probabilityPc> prob = nullptr;
+		int trefferuebrig = 17;
 		int schiffeuebrig = 5;
+		std::unique_ptr<probabilityPc> prob = nullptr;
 		std::array<int, 4> shipsleft = { 1,2,1,1 };
 		std::vector<ships> shipsplacement;
-		std::vector<std::vector<bool>> treffer = { /*wohin habe ich geschossen */
+		std::vector<std::vector<bool>> treffer = 
+		{ /*wohin habe ich geschossen */
 			{0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0},
@@ -57,7 +63,6 @@ namespace battleships {
 		};
 		virtual void make_move(Draw&, Player1&, int&, int&, bool, bool, bool, std::vector<std::vector<bool>>&) = 0;
 		virtual void placeships(Draw&, HANDLE&) = 0;
-		int trefferuebrig = 17;
 		void shipmanager();
 		bool validmove(int&, int&, std::vector<std::vector<bool>>&);
 		static bool validplacement(int&, int&, int, bool, std::vector<std::vector<bool>>&);

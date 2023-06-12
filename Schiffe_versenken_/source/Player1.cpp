@@ -2,31 +2,43 @@
 #define valid(v1,x,y) (((v1)[(x)][(y)] == 0) ? 1 : 0)
 // funktionen die sowohl Computer als auch Player brauchen
 #include "headers/Draw.h"
-namespace battleships {
-	void Player1::placeem(int& y, int& x, int j, int z, std::vector<std::vector<bool>>& ships) {
-		for (int o = 0; o < j; o++) {
-			for (int k = 0; k < z; k++) {
+namespace battleships
+{
+	void Player1::placeem(int& y, int& x, int j, int z, std::vector<std::vector<bool>>& ships)
+	{
+		for (int o = 0; o < j; o++) 
+		{
+			for (int k = 0; k < z; k++) 
+			{
 				ships[(long long)y + o][(long long)x + k] = 1;
 			}
 		}
 	}
 
-	bool Player1::gameover(Draw&, bool&) {
+	bool Player1::gameover(Draw&, bool&)
+	{
 
 		return false;
 	}
 
-	int Player1::getsmallestshiplen(std::array<int, 4>& ships, bool max_true) {
-		if (max_true) {
-			for (int i = 3; i >= 0; i--) {
-				if (ships[i] != 0) {
+	int Player1::getsmallestshiplen(std::array<int, 4>& ships, bool max_true)
+	{
+		if (max_true) 
+		{
+			for (int i = 3; i >= 0; i--) 
+			{
+				if (ships[i] != 0)
+				{
 					return i + 2;
 				}
 			}
 		}
-		else {
-			for (int i = 0; i < 4; i++) {
-				if (ships[i] != 0) {
+		else 
+		{
+			for (int i = 0; i < 4; i++) 
+			{
+				if (ships[i] != 0) 
+				{
 					return i + 2;
 				}
 			}
@@ -35,47 +47,57 @@ namespace battleships {
 	}
 
 
-	void Player1::change(int& s, int x, bool& check, Draw& drawer) {
+	void Player1::change(int& s, int x, bool& check, Draw& drawer) 
+	{
 		s--;
 		check = false;
 		*drawer.charptrs3[x][0] = (s + 48);
 
 	}
-	int Player1::getshipsiz(int& s1, int& s2, int& s3, int& s4, Draw& drawer) {
+	int Player1::getshipsiz(int& s1, int& s2, int& s3, int& s4, Draw& drawer) 
+	{
 		int wahl = 0;
 		bool check = 1;
 		std::vector<int> s = { 5,4,3,2 };
-		do {
+		do 
+		{
 			std::string temp;
 			std::cout << "welches schiff soll platziert werden?\n";
 
-			for (int k = 17; k < 21; k++) {
+			for (int k = 17; k < 21; k++) 
+			{
 				std::cout << s[((long long)k - 17)] << ": ";
-				for (int j = 0; j < 10; j++) {
+				for (int j = 0; j < 10; j++) 
+				{
 					std::cout << drawer.mapp3[k][j];
 				}
 				std::cout << "\n";
 			}
 			std::getline(std::cin, temp);
 			wahl = stoii((temp), 48);
-			switch (wahl) {
+			switch (wahl) 
+			{
 			case 2:
-				if (s1 != 0) {
+				if (s1 != 0) 
+				{
 					change(s1, 3, check, drawer);
 				}
 				break;
 			case 3:
-				if (s2 != 0) {
+				if (s2 != 0) 
+				{
 					change(s2, 2, check, drawer);
 				}
 				break;
 			case 4:
-				if (s3 != 0) {
+				if (s3 != 0) 
+				{
 					change(s3, 1, check, drawer);
 				}
 				break;
 			case 5:
-				if (s4 != 0) {
+				if (s4 != 0) 
+				{
 					change(s4, 0, check, drawer);
 				}
 				break;
@@ -85,7 +107,8 @@ namespace battleships {
 		} while (check);
 		return wahl;
 	}
-	void Player1::shipmanager() {
+	void Player1::shipmanager() 
+	{
 		return;
 	}
 	//void Player::movemaker(int& x, int& y, int player1, Draw& drawer) {
@@ -133,28 +156,35 @@ namespace battleships {
 	//
 	//}
 
-	bool Player1::validmove(int& x, int& y, std::vector<std::vector<bool>>& ships) {
+	bool Player1::validmove(int& x, int& y, std::vector<std::vector<bool>>& ships)
+	{
 		if (!((x >= 0 && x <= 9) && (y >= 0 && y <= 9)))
 		{
 			return false;
 		}
 		return valid(ships, x, y);
 	}
-	bool Player1::validplacement(int& y, int& x, int leng, bool is_horizontal, std::vector<std::vector<bool>>& shipss) {
+	bool Player1::validplacement(int& y, int& x, int leng, bool is_horizontal, std::vector<std::vector<bool>>& shipss) 
+	{
 		bool checker = 1;
 		int z = 0;
 		int t = 0;
-		if (is_horizontal) {
+		if (is_horizontal)
+		{
 			t = leng;
 			z = 1;
 		}
-		else {
+		else 
+		{
 			t = 1;
 			z = leng;
 		}
-		for (int i = 0; i < z && checker; i++) {
-			for (int k = 0; k < t && checker; k++) {
-				if (!((y + i >= 0 && y + i <= 9) && (x + k >= 0 && x + k <= 9))) {
+		for (int i = 0; i < z && checker; i++) 
+		{
+			for (int k = 0; k < t && checker; k++) 
+			{
+				if (!((y + i >= 0 && y + i <= 9) && (x + k >= 0 && x + k <= 9)))
+				{
 					return false;
 				}
 				checker = valid(shipss, y + i, x + k);
@@ -163,7 +193,8 @@ namespace battleships {
 		return checker;
 	}
 
-	void Player1::resettonormal(Draw& drawer) {
+	void Player1::resettonormal(Draw& drawer)
+	{
 		shipsleftreset(drawer);
 		//for (int i = 0; i < sizefield; i++) {
 		//	for (int k = 0; k < sizefield; k++) {
@@ -173,14 +204,16 @@ namespace battleships {
 		//}
 
 	}
-	void Player1::test(Draw& drawer) {
+	void Player1::test(Draw& drawer) 
+	{
 		std::cout << *drawer.charptrs3[0][0];
 		std::cout << "\n";
 		//*drawer.charptrs3[0][0] = shiff1left1 + 48;
 		std::cout << drawer.mapp3[17];
 	}
 
-	void Player1::shipsleftreset(Draw& drawer) {
+	void Player1::shipsleftreset(Draw& drawer) 
+	{
 		*drawer.charptrs3[3][0] = '1';
 		*drawer.charptrs3[2][0] = '2';
 		*drawer.charptrs3[1][0] = '1';
@@ -191,7 +224,8 @@ namespace battleships {
 		*drawer.charptrs3[0][1] = '1';
 	}
 
-	ships::ships(int yval, int xval, int len, bool is_horizontal) {
+	ships::ships(int yval, int xval, int len, bool is_horizontal)
+	{
 		//shipsplaces.reserve(len);
 		x = xval;
 		y = yval;
@@ -200,19 +234,23 @@ namespace battleships {
 		segsleft = len;
 		int z = 0;
 		int t = 0;
-		if (is_horizontal) {
+		if (is_horizontal) 
+		{
 			z = 1;
 			t = len;
 		}
-		else {
+		else 
+		{
 			z = len;
 			t = 1;
 		}
 
 		COORD res = { 0,0 };
 
-		for (int j = 0; j < z; j++) {
-			for (int k = 0; k < t; k++) {
+		for (int j = 0; j < z; j++) 
+		{
+			for (int k = 0; k < t; k++) 
+			{
 				res.Y = yval + j;
 				res.X = xval + k;
 				shipsplaces.push_back(res);

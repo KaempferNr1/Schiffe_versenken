@@ -22,7 +22,7 @@ int main()
 	srand((unsigned int)std::chrono::system_clock::now().time_since_epoch().count());
 	while (windowopen) 
 	{
-		battleships::reset(drawer);
+		reset(drawer);
 		system("pause");
 		clearscreen(drawer);
 		drawer.wahlget(auswahl, auswahl_temp, 1);

@@ -3,7 +3,7 @@
 #define valid(v1,x,y) (((v1)[(x)][(y)] == 0) ? 1 : 0)
 namespace battleships 
 {
-	void Computer::make_move(battleships::Draw& drawer, Player1& p2, int& wahlR, int& wahlS, bool see_ships_left, bool see_ships_right, bool map2_true, std::vector<std::vector<bool>>& dest_vec) 
+	void Computer::make_move(Draw& drawer, Player1& p2, int& wahlR, int& wahlS, bool see_ships_left, bool see_ships_right, bool map2_true, std::vector<std::vector<bool>>& dest_vec) 
 	{
 		//if (!map2_true) 
 		//{
@@ -12,7 +12,7 @@ namespace battleships
 		//else 
 		{
 			prob->shipsleft = this->shipsleft;
-			drawer.makemap(this->treffer, p2.eigeneschiffe, drawer.charptrs, 1, drawer.colors, dest_vec);
+			drawer.makemap(this->treffer, p2.eigeneschiffe, drawer.charptrs, true, drawer.colors, dest_vec);
 			for (int i = 0; i < 10; i++)
 			{
 				for (int j = 0; j < 10; j++)
@@ -33,8 +33,8 @@ namespace battleships
 		{
 			for (unsigned char c = 0; c < treffer.size(); ++c) 
 			{
-				eigeneschiffe[r][c] = 0;
-				treffer[r][c] = 0;
+				eigeneschiffe[r][c] = false;
+				treffer[r][c] = false;
 				prob->probss[r][c] = 1;
 			}
 		}
@@ -42,7 +42,7 @@ namespace battleships
 		int wahlR = 0;
 		int wahlS = 0;
 		std::array<int,5> wahl = { 2,3,3,4,5 };
-		bool is_horizontal = 0;
+		bool is_horizontal;
 		std::string waiter;
 		std::bernoulli_distribution distr1(0.5);
 		std::uniform_int_distribution distr2(0,9);
@@ -53,7 +53,7 @@ namespace battleships
 			{
 				wahlR = distr2(prob->randomengine);
 				wahlS = distr2(prob->randomengine);
-			} while (!(validplacement(wahlR, wahlS, wahl[i], is_horizontal, eigeneschiffe)));
+			} while (!validplacement(wahlR, wahlS, wahl[i], is_horizontal, eigeneschiffe));
 			if (is_horizontal)
 			{
 				placeem(wahlR, wahlS, 1, wahl[i], eigeneschiffe);

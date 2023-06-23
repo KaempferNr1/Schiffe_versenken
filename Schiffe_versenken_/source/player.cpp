@@ -1,5 +1,5 @@
 #include "headers\player.h"
-#define valid(v1,x,y) (((v1)[(x)][(y)] == 0) ? 1 : 0) 
+
 namespace battleships 
 {
 	void Player::make_move(Draw& drawer, Player1& p2, int& wahlR, int& wahlS, bool see_ships_left, bool see_ships_right, bool map2_true, std::vector<std::vector<bool>>& dest_vec) 
@@ -8,8 +8,7 @@ namespace battleships
 	}
 	void Player::placeships(Draw& drawer, HANDLE& console)
 	{
-		bool is_horizontal = 0;
-		int wahlS = 0, wahlR = 0, wahl = 0;
+		int wahlS = 0, wahlR = 0;
 		COORD cursorPos = { 0,0 };
 		system("cls");
 		for (int k = 0; k < 5; k++)
@@ -22,8 +21,8 @@ namespace battleships
 			drawer.drawMap(50, drawer.mappp, 0);
 			std::cout << "soll das schiff horizontal(1) oder vertikal(0) sein?";
 			std::getline(std::cin, temp);
-			is_horizontal = stoii((temp), 48);
-			wahl = getshipsiz(shipsleft[0], shipsleft[1], shipsleft[2], shipsleft[3], drawer);
+			const bool is_horizontal = stoii((temp), 48);
+			const int wahl = getshipsiz(shipsleft[0], shipsleft[1], shipsleft[2], shipsleft[3], drawer);
 			std::cout << "wo soll das schiff platziert werden\n(oberster/linkster Ort vom Schiff)\n zuerst reihe dann spalte und mit enter trennen\n";
 			int zahl = 0;
 			do 
@@ -61,22 +60,21 @@ namespace battleships
 		{
 			for (unsigned char c = 0; c < treffer.size(); ++c)
 			{
-				eigeneschiffe[r][c] = 0;
-				treffer[r][c] = 0;
+				eigeneschiffe[r][c] = false;
+				treffer[r][c] = false;
 				prob->probss[r][c] = 1;
 			}
 		}
 
 		int wahlR = 0;
 		int wahlS = 0;
-		std::array<int, 5> wahl = { 2,3,3,4,5 };
-		bool is_horizontal = 0;
+		const std::array<int, 5> wahl = { 2,3,3,4,5 };
 		std::string waiter;
 		std::bernoulli_distribution distr1(0.5);
 		std::uniform_int_distribution distr2(0, 9);
 		for (int i = 0; i < 5; i++)
 		{
-			is_horizontal = distr1(prob->randomengine);
+			const bool is_horizontal = distr1(prob->randomengine);
 			do
 			{
 				wahlR = distr2(prob->randomengine);

@@ -7,13 +7,13 @@ namespace battleships
 {
 	class Player : public Player1 
 	{
-	private:
-		friend class Draw;
 	public:
+		Player(Draw&);
+		Player(Draw&, int);
 		void make_move(Draw&, Player1&, int&, int&, bool, bool, bool, std::vector<std::vector<bool>>&) override;
 		void placeships(Draw&, HANDLE&) override;
 		void pc_placeships(Draw&, HANDLE&);
-		Player(Draw&);
-		Player(Draw&, int);
+	private:
+		friend class Draw;
 	};
 }

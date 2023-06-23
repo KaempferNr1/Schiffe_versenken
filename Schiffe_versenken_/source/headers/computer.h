@@ -8,13 +8,13 @@ namespace battleships
 	class Draw;
 	class Computer : public Player1
 	{
-	private:
-		friend class Draw;
 	public:
-		void make_move(Draw&, Player1&, int&, int&, bool, bool, bool, std::vector<std::vector<bool>>&) override;
-		void placeships(Draw&, HANDLE&) override;
 		Computer(Draw&);
 		Computer(Draw&, int);
+		void make_move(Draw&, Player1&, int&, int&, bool, bool, bool, std::vector<std::vector<bool>>&) override;
+		void placeships(Draw&, HANDLE&) override;
+	private:
+		friend class Draw;
 	};
 }
 

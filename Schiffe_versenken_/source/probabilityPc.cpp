@@ -67,27 +67,18 @@ namespace battleships
 	{
 		randomengine = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
 		std::uniform_real_distribution<double> for_weight_destroyed_missed(-5, 5);
-		std::uniform_real_distribution<double> for_weight_hit_unused(0, 10);
-		hit_weight = for_weight_hit_unused(randomengine);
 		destroyed_weight = for_weight_destroyed_missed(randomengine);
 		missed_weight = for_weight_destroyed_missed(randomengine);
+
+		std::uniform_real_distribution<double> for_weight_hit_unused(0, 10);
+		hit_weight = for_weight_hit_unused(randomengine);
 		unused_weight = for_weight_hit_unused(randomengine);
 		this->fptr = &probabilityPc::hard_version;
 	}
 
-	probabilityPc::~probabilityPc()
-	{
-
-	}
-
-	void weir()
-	{
-		probabilityPc p;
-	}
-
 	std::vector<std::vector<double>> probabilityPc::initialize_grid() 
 	{
-		std::vector<std::vector<double>> grid(10, std::vector<double>(10, 1));
+		std::vector<std::vector<double>> grid(10, std::vector<double>(10, 1.0));
 		return grid;
 	}
 	void probabilityPc::update_probabilities(std::vector<std::vector<bool>>& hits)
@@ -100,7 +91,7 @@ namespace battleships
 
 	}
 
-	void probabilityPc::easy_version(std::vector<std::vector<bool>>& x, int& next_row, int& next_col) 
+	void probabilityPc::easy_version(std::vector<std::vector<bool>>& hit_vec, int& next_row, int& next_col)
 	{
 		foundhit = false;
 		for (int row = 0; row < global::sizefield; ++row) 
@@ -111,13 +102,13 @@ namespace battleships
 				if (cell == global::hit)
 				{
 					probss[row][col] = 0.0;
-					change_probs(x, col, row, hit_weight, 0, 0);
+					change_probs(hit_vec, col, row, hit_weight, false);
 					foundhit = true;
 				}
 				else if (cell == global::destroyed) 
 				{
 					probss[row][col] = 0.0;
-					change_probs(x, col, row, destroyed_weight, 0, 0);
+					change_probs(hit_vec, col, row, destroyed_weight, false);
 				}
 			}
 		}
@@ -140,7 +131,7 @@ namespace battleships
 			do {
 				next_row = distr(randomengine);
 				next_col = distr(randomengine);
-			} while (!((x[next_row][next_col] == 0) ? 1 : 0));
+			} while (!((hit_vec[next_row][next_col] == 0) ? 1 : 0));
 			numberofrandhits++;
 			return;
 		}
@@ -150,7 +141,7 @@ namespace battleships
 		{
 			for (int c = 0; c < global::sizefield; c++) 
 			{
-				if (!x[r][c])
+				if (!hit_vec[r][c])
 				{
 					if (probss[r][c] > max_prob)
 					{
@@ -164,19 +155,19 @@ namespace battleships
 		next_col = candidates[max_prob].second;
 	}
 
-	void probabilityPc::medium_version(std::vector<std::vector<bool>>& x, int& next_row, int& next_col)
+	void probabilityPc::medium_version(std::vector<std::vector<bool>>& hit_vec, int& next_row, int& next_col)
 	{
 		for (int row2 = 0; row2 < global::sizefield; row2++)
 		{
 			for (int col2 = 0; col2 < global::sizefield; col2++)
 			{
-				if (!x[row2][col2] && probss[row2][col2] != 0)
+				if (!hit_vec[row2][col2] && probss[row2][col2] != 0.0)
 				{
 					probss[row2][col2] = 1;
 				}
 			}
 		}
-		bool early_return = 0;
+		bool early_return = false;
 		std::uniform_int_distribution distr(0, global::randnumbermax - 1);
 		int rowrand = distr(randomengine);
 		int colrand = distr(randomengine);
@@ -188,7 +179,7 @@ namespace battleships
 				next_row = rowrand;
 				next_col = colrand;
 				numberofrandhits++;
-				early_return = 1;
+				early_return = true;
 			}
 		}
 		foundhit = false;
@@ -196,22 +187,22 @@ namespace battleships
 		{
 			for (int col = 0; col < global::sizefield; ++col)
 			{
-				char cell = map[row][col];
+				const char cell = map[row][col];
 				if (cell == global::miss)
 				{
 					probss[row][col] = 0.0;
-					change_probs(x, col, row, missed_weight, 0, 0);
+					change_probs(hit_vec, col, row, missed_weight, false);
 				}
 				else if (cell == global::hit)
 				{
 					probss[row][col] = 0.0;
-					change_probs(x, col, row, hit_weight, 1, 0);
+					change_probs(hit_vec, col, row, hit_weight, true);
 					foundhit = true;
 				}
 				else if (cell == global::destroyed) 
 				{
 					probss[row][col] = 0.0;
-					change_probs(x, col, row, destroyed_weight, 0, 0);
+					change_probs(hit_vec, col, row, destroyed_weight, false);
 				}
 			}
 		}
@@ -238,7 +229,7 @@ namespace battleships
 		{
 			for (int c = 0; c < global::sizefield; c++) 
 			{
-				if (!x[r][c])
+				if (!hit_vec[r][c])
 				{
 					if (probss[r][c] > max_prob) 
 					{
@@ -260,7 +251,7 @@ namespace battleships
 				{
 					for (int c = 9; c >= 0; c--) 
 					{
-						if (!x[r][c])
+						if (!hit_vec[r][c])
 						{
 							if (probss[r][c] > max_prob2)
 							{
@@ -281,7 +272,7 @@ namespace battleships
 				{
 					for (int c = 9; c > 4; c--)
 					{
-						if (!x[r][c]) 
+						if (!hit_vec[r][c]) 
 						{
 							if (probss[r][c] > max_prob2)
 							{
@@ -292,7 +283,7 @@ namespace battleships
 					}
 					for (int c = 0; c < 5; c++)
 					{
-						if (!x[r][c])
+						if (!hit_vec[r][c])
 						{
 							if (probss[r][c] > max_prob2)
 							{
@@ -306,7 +297,7 @@ namespace battleships
 				{
 					for (int c = 0; c < 5; c++) 
 					{
-						if (!x[r][c])
+						if (!hit_vec[r][c])
 						{
 							if (probss[r][c] > max_prob2)
 							{
@@ -317,7 +308,7 @@ namespace battleships
 					}
 					for (int c = 9; c > 4; c--)
 					{
-						if (!x[r][c]) 
+						if (!hit_vec[r][c]) 
 						{
 							if (probss[r][c] > max_prob2)
 							{
@@ -338,44 +329,29 @@ namespace battleships
 		}
 	}
 
-	void probabilityPc::hard_version(std::vector<std::vector<bool>>& x, int& next_row, int& next_col)
+	void probabilityPc::hard_version(std::vector<std::vector<bool>>& hit_vec, int& next_row, int& next_col)
 	{
 		for (int row = 0; row < global::sizefield; row++)
 		{
 			for (int col = 0; col < global::sizefield; col++)
 			{
-				if (!x[row][col] && probss[row][col] != 0) 
+				if (!hit_vec[row][col] && probss[row][col] != 0.0)
 				{
 					probss[row][col] = 1;
 				}
 			}
 		}
-		bool early_return = 0;
-		std::uniform_int_distribution distr(0, global::randnumbermax - 1);
-		//int rowrand = distr(randomengine);
-		//int colrand = distr(randomengine);
-		//if ((colrand < global::sizefield && colrand >= 0) && (rowrand < global::sizefield && colrand >= 0)) 
-		//{
-		//	char randcell = map[rowrand][colrand];
-		//	if (randcell == global::ship)
-		//	{
-		//		next_row = rowrand;
-		//		next_col = colrand;
-		//		numberofrandhits++;
-		//		early_return = 1;
-		//	}
-		//}
-		std::vector<std::vector<bool>> x_copy = x;
+		bool early_return = false;
+
 		foundhit = false;
 		for (int row = 0; row < global::sizefield; row++)
 		{
 			for (int col = 0; col < global::sizefield; col++)
 			{
-				char cell = map[row][col];
+				const char cell = map[row][col];
 				if (cell == global::hit)
 				{
-					x_copy[row][col] = 0;
-					change_probs(x, col, row, hit_weight, 1, 0);
+					change_probs(hit_vec, col, row, hit_weight, true);
 					foundhit = true;
 				}
 			}
@@ -387,18 +363,17 @@ namespace battleships
 			{
 				shipps[i+2] = shipsleft[i];
 			}
-			bool cont = 1;
 			for (int row = 0; row < global::sizefield; row++) 
 			{
 				for (int col = 0; col < global::sizefield; col++) 
 				{
-					if (!x_copy[row][col])
+					if (!hit_vec[row][col])
 					{
 						for (auto& [shiplen, shipleft] : shipps) 
 						{
 							if (shipleft) 
 							{
-								if (Player1::validplacement(row, col, shiplen, 1, x_copy))
+								if (Player1::validplacement(row, col, shiplen, true, hit_vec))
 								{
 									for (int j = 0; j < shiplen; j++) 
 									{
@@ -415,7 +390,7 @@ namespace battleships
 										probss[row][col + j] -= ((shiplen - j) * unused_weight) / hit_weight;
 									}
 								}
-								if (Player1::validplacement(row, col, shiplen, 0, x_copy))
+								if (Player1::validplacement(row, col, shiplen, false, hit_vec))
 								{
 									for (int j = 0; j < shiplen; j++) 
 									{
@@ -457,25 +432,24 @@ namespace battleships
 		}
 		double max_prob = std::numeric_limits<double>::lowest();
 		std::unordered_map<double, std::pair<int, int>> candidates;
-		bool tie = 0;
-		unsigned char index = 0;
+		bool tie = false;
 		std::vector<std::pair<int, int>> tie_candidates;
 		tie_candidates.reserve(10);
 		for (int r = 0; r < global::sizefield; r++)
 		{
 			for (int c = 0; c < global::sizefield; c++)
 			{
-				if (!x[r][c])
+				if (!hit_vec[r][c])
 				{
 					if (probss[r][c] > max_prob) 
 					{
 						max_prob = probss[r][c];
-						tie = 0;
+						tie = false;
 						tie_candidates.clear();
 					}
 					else if (probss[r][c] == max_prob)
 					{
-						tie = 1;
+						tie = true;
 						tie_candidates.emplace_back(r, c);
 					}
 					candidates[probss[r][c]] = std::make_pair(r, c);
@@ -485,7 +459,7 @@ namespace battleships
 		if (tie) 
 		{
 			std::uniform_int_distribution distro(0, (int)tie_candidates.size() - 1);
-			std::pair<int, int> res = tie_candidates[distro(randomengine)];
+			const std::pair<int, int> res = tie_candidates[distro(randomengine)];
 			next_row = res.first;
 			next_col = res.second;
 		}
@@ -501,7 +475,7 @@ namespace battleships
 		}
 	}
 
-	void probabilityPc::impossible_version(std::vector<std::vector<bool>>& x, int& next_row, int& next_col)
+	void probabilityPc::impossible_version(std::vector<std::vector<bool>>& hit_vec, int& next_row, int& next_col)
 	{
 		std::bernoulli_distribution event(0.5);
 		if (event(randomengine))
@@ -510,7 +484,7 @@ namespace battleships
 			{
 				for (int col = 0; col < global::sizefield; ++col)
 				{
-					char cell = map[row][col];
+					const char cell = map[row][col];
 					if (cell == global::ship)
 					{
 						next_row = row;
@@ -522,81 +496,73 @@ namespace battleships
 		}
 		else 
 		{
-			hard_version(x, next_row, next_col);
+			hard_version(hit_vec, next_row, next_col);
 		}
 	}
 
+	constexpr double smart_change = 8;
 
-
-
-
-	void probabilityPc::change_probs(std::vector<std::vector<bool>>& x, int& col, int& row, double change, bool do_thething, bool do_the_other_thing)
+	void probabilityPc::change_probs(std::vector<std::vector<bool>>& x, int& col, int& row, double change, bool do_smarter_check)
 	{
-		if (do_the_other_thing) 
+
+		probss[row][col] = 0;
+		if (row != global::sizefield-1) 
 		{
-
-
-		}
-		else
-		{
-			probss[row][col] = 0;
-			if (row != global::sizefield-1) 
+			if (!x[(long long)row + 1][(long long)col]) 
 			{
-				if (!x[(long long)row + 1][(long long)col]) 
-				{
-					probss[(long long)row + 1][(long long)col] += change;
-				}
-				if (map[(long long)row + 1][(long long)col] == global::hit && do_thething)
-				{
-					if (row != 0 && !x[(long long)row - 1][(long long)col]) 
-					{
-						probss[(long long)row - 1][(long long)col] += 8;
-					}
-				}
+				probss[(long long)row + 1][(long long)col] += change;
 			}
-			if (col != global::sizefield-1) 
+			if (map[(long long)row + 1][(long long)col] == global::hit && do_smarter_check)
 			{
-				if (!x[(long long)row][(long long)col + 1])
+				if (row != 0 && !x[(long long)row - 1][(long long)col]) 
 				{
-					probss[(long long)row][(long long)col + 1] += change;
-				}
-				if (map[(long long)row][(long long)col + 1] == global::hit && do_thething)
-				{
-					if (col != 0 && !x[(long long)row][(long long)col - 1])
-					{
-						probss[(long long)row][(long long)col - 1] += 8;
-					}
-				}
-			}
-			if (row != 0)
-			{
-				if (!x[(long long)row - 1][(long long)col])
-				{
-					probss[(long long)row - 1][(long long)col] += change;
-				}
-				if (map[(long long)row - 1][(long long)col] == global::hit && do_thething)
-				{
-					if (row != global::sizefield-1 && !x[(long long)row + 1][(long long)col])
-					{
-						probss[(long long)row + 1][(long long)col] += 8;
-					}
-				}
-
-			}
-			if (col != 0) 
-			{
-				if (!x[(long long)row][(long long)col - 1])
-				{
-					probss[(long long)row][(long long)col - 1] += change;
-				}
-				if (map[(long long)row][(long long)col - 1] == global::hit && do_thething)
-				{
-					if (col != global::sizefield-1 && !x[(long long)row][(long long)col + 1])
-					{
-						probss[(long long)row][(long long)col + 1] += 8;
-					}
+					probss[(long long)row - 1][(long long)col] += smart_change;
 				}
 			}
 		}
+		if (col != global::sizefield-1) 
+		{
+			if (!x[(long long)row][(long long)col + 1])
+			{
+				probss[(long long)row][(long long)col + 1] += change;
+			}
+			if (map[(long long)row][(long long)col + 1] == global::hit && do_smarter_check)
+			{
+				if (col != 0 && !x[(long long)row][(long long)col - 1])
+				{
+					probss[(long long)row][(long long)col - 1] += smart_change;
+				}
+			}
+		}
+		if (row != 0)
+		{
+			if (!x[(long long)row - 1][(long long)col])
+			{
+				probss[(long long)row - 1][(long long)col] += change;
+			}
+			if (map[(long long)row - 1][(long long)col] == global::hit && do_smarter_check)
+			{
+				if (row != global::sizefield-1 && !x[(long long)row + 1][(long long)col])
+				{
+					probss[(long long)row + 1][(long long)col] += smart_change;
+				}
+			}
+
+		}
+		if (col != 0) 
+		{
+			if (!x[(long long)row][(long long)col - 1])
+			{
+				probss[(long long)row][(long long)col - 1] += change;
+			}
+			if (map[(long long)row][(long long)col - 1] == global::hit && do_smarter_check)
+			{
+				if (col != global::sizefield-1 && !x[(long long)row][(long long)col + 1])
+				{
+					probss[(long long)row][(long long)col + 1] += smart_change;
+				}
+			}
+		}
+		
 	}
 }

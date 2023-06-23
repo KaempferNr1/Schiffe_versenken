@@ -15,12 +15,6 @@ namespace battleships
 		}
 	}
 
-	bool Player1::gameover(Draw&, bool&)
-	{
-
-		return false;
-	}
-
 	int Player1::getsmallestshiplen(std::array<int, 4>& ships, bool max_true)
 	{
 		if (max_true) 
@@ -45,9 +39,7 @@ namespace battleships
 		}
 		return -1;
 	}
-
-
-	void Player1::change(int& s, int x, bool& check, Draw& drawer) 
+	void Player1::change(int& s, int x, bool& check, Draw& drawer)
 	{
 		s--;
 		check = false;
@@ -107,54 +99,7 @@ namespace battleships
 		} while (check);
 		return wahl;
 	}
-	void Player1::shipmanager() 
-	{
-		return;
-	}
-	//void Player::movemaker(int& x, int& y, int player1, Draw& drawer) {
-	//	hitmanager(x, y, player1, drawer);
-	//	// player1 == 1 wenn spieler 2 drann ist
-	//	(player1 == 1) ? (drawer.makemap(ships2forP1, ships2, drawer.charptrs, 1)) : (drawer.makemap(ships1forP2, ships1, drawer.charptrs, 1));
-	//}
-	//void Player::hitmanager(int& x, int& y, int player1, Draw& drawer) {
-	//	(player1 == 1) ? (ships1forP2[x][y] = 1, drawer.makemap(ships1forP2, ships1, drawer.charptrs2, 0)) : (ships2forP1[x][y] = 1, drawer.makemap(ships2forP1, ships2, drawer.charptrs2, 0));
-	//}
-	//void Player::make_enemy_map(vector<vector<bool>>&ships_see, vector<vector<bool>>&ships, vector<vector<char*>>& charptrs) {
-	//	for (int i = 0; i < sizefield; i++) {
-	//		for (int k = 0; k < sizefield; k++) {
-	//			if (ships_see[i][k] == 0) {
-	//				charptrs[i][k][0] = unused;
-	//			}
-	//			else if (ships_see[i][k] == ships[i][k]) {
-	//				charptrs[i][k][0] = hit;
-	//			}
-	//			else {
-	//				charptrs[i][k][0] = miss;
-	//			}
-	//		}
-	//	}
-	//
-	//}
-	//void Player::makemap(vector<vector<bool>>& ships_see, vector<vector<bool>>& ships, vector<vector<char*>>& charptrs, bool z) {
-	//	for (int i = 0; i < sizefield; i++) {
-	//		for (int k = 0; k < sizefield; k++) {
-	//			if (ships_see[i][k] == 0 && (ships[i][k] == 0 || !z)) {
-	//				charptrs[i][k][0] = unused;
-	//			}
-	//			else if ((ships_see[i][k] == 0 && ships[i][k] == 1) && z) {
-	//				charptrs[i][k][0] = ship;
-	//
-	//			}
-	//			else if (ships_see[i][k] == 1 && ships[i][k] == 1) {
-	//				charptrs[i][k][0] = hit;
-	//			}
-	//			else {
-	//				charptrs[i][k][0] = miss;
-	//			}
-	//		}
-	//	}
-	//
-	//}
+
 
 	bool Player1::validmove(int& x, int& y, std::vector<std::vector<bool>>& ships)
 	{

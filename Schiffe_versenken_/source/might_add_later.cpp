@@ -24,7 +24,7 @@
 		}
 }
 	#endif*/
-//for draw.h hab hier tatsächlich auch die handles rausgemacht
+//for draw.h hab hier tatsÃ¤chlich auch die handles rausgemacht
 /*#else
 
 0.11785 , 0.153364 , 0.17493 , 0.182337 , 0.182181 , 0.182511 , 0.182298 , 0.174805 , 0.154849 , 0.118481
@@ -172,7 +172,7 @@ void Draw::drawPvP(Draw& drawer) {
 void Draw::drawPv(HANDLE& console, Draw& drawer) {
 	game_end = false;
 	Computer pc;
-	//Player function; //nur für methods hier vllt sollte ich die methods anders machen oder erbschafft einbringen
+	//Player function; //nur fÃ¼r methods hier vllt sollte ich die methods anders machen oder erbschafft einbringen
 	COORD cursorPos = { 0,0 };
 	//Compare cper;
 	int zaehler = 0;

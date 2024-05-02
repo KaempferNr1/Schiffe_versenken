@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="battleships::Computer" Collapsed="true">
+    <Position X="2.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAgAAAAAEAAAAA=</HashCode>
+      <FileName>source\headers\computer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="battleships::Player1" Collapsed="true">
+    <Position X="4.25" Y="3.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>BAIAYEAAIAACQACIgAQABAAAAAAAAAAoAAAAAEAEAAI=</HashCode>
+      <FileName>source\headers\Player1.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="prob" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="battleships::Player" Collapsed="true">
+    <Position X="2.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAgAAAAAUAAAAA=</HashCode>
+      <FileName>source\headers\player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="battleships::Draw" Collapsed="true">
+    <Position X="0.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CJACAwECgBEAMiBCEGQAAIEoQABBNACGAAGAAAAAAAg=</HashCode>
+      <FileName>source\headers\Draw.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="battleships::probabilityPc" Collapsed="true">
+    <Position X="2.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ASAAEAAAQAgBABAMAABQASAgcRAAggAgEAAQAIAAAAQ=</HashCode>
+      <FileName>source\headers\probabilityPc.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="battleships::ships" Collapsed="true">
+    <Position X="2.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAQAAAAAEAgAAAAAAgAAAAAAABggAAAAAA=</HashCode>
+      <FileName>source\headers\Player1.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Compare" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>source\headers\Compare.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="battleships::User" Collapsed="true">
+    <Position X="0.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAABAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>source\headers\highscore.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="battleships::Highscore" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>source\headers\highscore.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="std::unique_ptr&lt;_Ty, _Dx&gt;" Collapsed="true">
+    <Position X="3" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAEAAAAAAgEAEAAQgAAAAAAAAAAAQAgAAAAAIg=</HashCode>
+      <FileName>C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\memory</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="probs" Collapsed="true">
+    <Position X="0.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAABgAAAAAAA=</HashCode>
+      <FileName>source\headers\probabilityPc.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="std::hash&lt;probs&gt;" Collapsed="true">
+    <Position X="0.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>source\headers\probabilityPc.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,5 +1,8 @@
 #include <sstream>
 #include "headers/Draw.h"
+
+#include <thread>
+
 #include "headers/Player1.h"
 #include "headers/computer.h"
 #include "headers/player.h"
@@ -90,7 +93,7 @@ namespace battleships
 	int zahl = 0;
 
 
-	int Draw::gameloop(Draw& drawer, Player1& p1, Player1& p2, bool see_ships_left, bool see_ships_right, bool map2_true, bool player_switch, bool draw_map)
+	int Draw::gameloop(Draw& drawer, Player1& p1, Player1& p2, const bool see_ships_left, const bool see_ships_right, bool map2_true, bool player_switch, bool draw_map)
 	{
 
 		//der erste bool sagt ob man die schiffe in der linken map sehen kann
@@ -260,7 +263,7 @@ namespace battleships
 		Computer pc1(drawer, which_difficulty);
 		Player p1(drawer);
 		pc1.placeships(drawer, console);
-		p1.placeships(drawer, console);
+		p1.pc_placeships(drawer, console);
 		//setmakedrawmap(mapp2, nthing, p1, pc1, 1, 1, 0, 1);
 		while (!game_end) 
 		{
@@ -399,18 +402,19 @@ namespace battleships
 				}
 
 
-				//Hier fängt 
+				//Hier fängts an 
 				while (!game_end)
 				{
 					if (static_cast<int>(ds - prevds) / 2 > too_big_small[j].second && show_weird_things)
 					{
 						except = true;
 					}
-					zaehler = gameloop(drawer, *pc1, *pc2, true, true, true, true, draw_map || except);
+					zaehler = gameloop(drawer, *pc1, *pc2, false, false, true, true, draw_map || except);
+					//std::this_thread::sleep_for(std::chrono::milliseconds(100));
 					ds++;
 					bigzahl++;
 				}
-
+				
 				except = false;
 				if (debug) 
 				{
@@ -421,7 +425,7 @@ namespace battleships
 						hoechste_anzahl = (int)ds - (int)prevds;
 						if (j == 2)
 						{
-							worst_hit_weight = (which ? pc2 : pc1)->prob->hit_weight;
+							worst_hit_weight = (which ? pc2 : pc1 )->prob->hit_weight;
 							worst_unused_weight = (which ? pc2 : pc1)->prob->unused_weight;
 							worst_destroyed_weight = (which ? pc2 : pc1)->prob->destroyed_weight;
 							worst_missed_weight = (which ? pc2 : pc1)->prob->missed_weight;
@@ -582,7 +586,7 @@ namespace battleships
 				std::cout << "\t" << i + 1 << "\t" << moeglichkeiten[i];
 			}
 		}
-		std::getline(std::cin, as);
+		std::getline(std::cin >> std::ws, as);
 		auswahl = (x == 1 || x == 2) ? stoii(as, 48) : stoii(as, 65);
 	}
 
@@ -657,55 +661,56 @@ namespace battleships
 		return resultInt;
 	}
 
-	void Draw::isdestroyed(Draw& drawer, Player1& p1, Player1& p2, std::vector<std::vector<bool>>& dest) 
+	void Draw::isdestroyed(Draw& drawer, Player1& p1, Player1& p2, std::vector<std::vector<bool>>& dest)
 	{
-		for (int integ = 0; integ < 4; integ++)
-		{
-			p1.shipsleft[3 - integ] = 1;
-		}
-		p1.shipsleft[1] = 2;
-		p1.schiffeuebrig = 5;
-		for (int r = 0; r < 10; r++) 
-		{
-			for (int c = 0; c < 10; c++) 
-			{
-				dest[r][c] = false;
-			}
-		}
+		//for (int integ = 0; integ < 4; integ++)
+		//{
+		//	p1.shipsleft[3 - integ] = 1;
+		//}
+		//p1.shipsleft[1] = 2;
+		//p1.schiffeuebrig = 5;
+		//for (int r = 0; r < 10; r++)
+		//{
+		//	for (int c = 0; c < 10; c++)
+		//	{
+		//		dest[r][c] = false;
+		//	}
+		//}
 		for (int i = 0; i < 5; i++)
 		{
-			if (p1.shipsplacement[i].destroyed == 0) 
+			if (p1.shipsplacement[i].destroyed == 0)
 			{
 				bool checker = true;
-				for (int k = 0; k < p1.shipsplacement[i].length && checker; k++) 
+				for (int k = 0; k < p1.shipsplacement[i].length && checker; k++)
 				{
 					if (p2.treffer[p1.shipsplacement[i].shipsplaces[k].Y][p1.shipsplacement[i].shipsplaces[k].X])
 					{
 						checker = true;
 					}
-					else 
+					else
 					{
 						checker = false;
 					}
 				}
-				if (checker) 
+				if (checker)
 				{
 					p1.schiffeuebrig--;
 					p1.shipsplacement[i].destroyed = true;
 					p1.shipsleft[p1.shipsplacement[i].length - 2] = p1.shipsleft[p1.shipsplacement[i].length - 2] - 1;
-					for (int j = 0; j < p1.shipsplacement[i].length; j++) 
+					for (int j = 0; j < p1.shipsplacement[i].length; j++)
 					{
 						dest[p1.shipsplacement[i].shipsplaces[j].Y][p1.shipsplacement[i].shipsplaces[j].X] = true;
 					}
+
 				}
-			}
-			else 
-			{
-				p1.schiffeuebrig--;
-				p1.shipsleft[p1.shipsplacement[i].length - 2]--;
-				for (int j = 0; j < p1.shipsplacement[i].length; j++) 
+				else
 				{
-					dest[p1.shipsplacement[i].shipsplaces[j].Y][p1.shipsplacement[i].shipsplaces[j].X] = true;
+					//p1.schiffeuebrig--;
+					//p1.shipsleft[p1.shipsplacement[i].length - 2]--;
+					for (int j = 0; j < p1.shipsplacement[i].length; j++)
+					{
+						dest[p1.shipsplacement[i].shipsplaces[j].Y][p1.shipsplacement[i].shipsplaces[j].X] = false;
+					}
 				}
 			}
 		}

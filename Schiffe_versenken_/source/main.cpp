@@ -12,6 +12,7 @@
 
 void clearscreen(battleships::Draw&);
 
+
 // min size damit es funktioniert 170
 int main() 
 {
@@ -39,11 +40,6 @@ int main()
 			break;
 		case 4:
 			drawer.drawCvC(drawer);
-			break;
-		case 5:
-			break;
-		case 6:
-			drawer.mostlikelysq(drawer);
 			break;
 		default:
 			std::cout << "okay dann tschau";

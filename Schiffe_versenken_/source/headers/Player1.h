@@ -26,6 +26,7 @@ namespace battleships
 	class Player1 
 	{
 	public:
+		virtual ~Player1(){}
 		virtual void make_move(Draw&, Player1&, int&, int&, bool, bool, bool, std::vector<std::vector<bool>>&) = 0;
 		virtual void placeships(Draw&, HANDLE&) = 0;
 

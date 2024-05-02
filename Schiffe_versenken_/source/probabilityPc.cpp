@@ -7,7 +7,7 @@ namespace battleships
 {
 	probabilityPc::probabilityPc(Draw& drawer) 
 	{
-		randomengine = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
+		randomengine = std::mt19937_64(std::random_device()());
 		dptr = &drawer;
 		std::uniform_real_distribution<double> for_weight_destroyed_missed(-5, 5);
 		std::uniform_real_distribution<double> for_weight_hit_unused(0, 10);
@@ -19,7 +19,8 @@ namespace battleships
 	}
 	probabilityPc::probabilityPc(Draw& drawer, int x)
 	{
-		randomengine = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
+		
+		randomengine = std::mt19937_64(std::random_device()());
 		dptr = &drawer;
 		std::uniform_real_distribution<double> for_weight_destroyed_missed(-5, -0.001);
 		std::uniform_real_distribution<double> for_weight_hit(1, 10);
@@ -65,7 +66,7 @@ namespace battleships
 	}
 	probabilityPc::probabilityPc()
 	{
-		randomengine = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
+		randomengine = std::mt19937_64(std::random_device()());
 		std::uniform_real_distribution<double> for_weight_destroyed_missed(-5, 5);
 		destroyed_weight = for_weight_destroyed_missed(randomengine);
 		missed_weight = for_weight_destroyed_missed(randomengine);
@@ -98,7 +99,7 @@ namespace battleships
 		{
 			for (int col = 0; col < global::sizefield; ++col)
 			{
-				char cell = map[row][col];
+				const char cell = map[row][col];
 				if (cell == global::hit)
 				{
 					probss[row][col] = 0.0;
@@ -380,7 +381,8 @@ namespace battleships
 										probss[row][col + j] += (shiplen + j) * unused_weight;
 									}
 								}
-								else {
+								else 
+								{
 									for (int j = 0; j < shiplen; j++) 
 									{
 										if (!(col + j >= 0 && col + j <= 9))
@@ -397,7 +399,8 @@ namespace battleships
 										probss[row + j][col] += (shiplen + j) * unused_weight;
 									}
 								}
-								else {
+								else
+								{
 									for (int j = 0; j < shiplen; j++)
 									{
 										if (!(row + j >= 0 && row + j <= 9)) 

@@ -65,7 +65,7 @@ namespace battleships
 				}
 				std::cout << "\n";
 			}
-			std::getline(std::cin, temp);
+			std::getline(std::cin >> std::ws, temp);
 			wahl = stoii((temp), 48);
 			switch (wahl) 
 			{

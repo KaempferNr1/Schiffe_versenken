@@ -72,4 +72,7 @@
   <ItemGroup>
     <Text Include="source\score.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
 </Project>

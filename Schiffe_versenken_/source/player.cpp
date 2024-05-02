@@ -20,7 +20,7 @@ namespace battleships
 			drawer.setmap(drawer.mappp, drawer.mapp, drawer.mapp3, drawer.emptyvec, drawer.nthing);
 			drawer.drawMap(50, drawer.mappp, 0);
 			std::cout << "soll das schiff horizontal(1) oder vertikal(0) sein?";
-			std::getline(std::cin, temp);
+			std::getline(std::cin >> std::ws, temp);
 			const bool is_horizontal = stoii((temp), 48);
 			const int wahl = getshipsiz(shipsleft[0], shipsleft[1], shipsleft[2], shipsleft[3], drawer);
 			std::cout << "wo soll das schiff platziert werden\n(oberster/linkster Ort vom Schiff)\n zuerst reihe dann spalte und mit enter trennen\n";

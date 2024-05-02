@@ -16,7 +16,7 @@ namespace battleships
 	{
 		constexpr  int  sizefield = 10;
 		constexpr  char hit = '*';
-		constexpr  char destroyed = 'x'; // nur für Pv und CvC jetzt mach ich es doch für jeden modus3
+		constexpr  char destroyed = 'X'; // nur für Pv und CvC jetzt mach ich es doch für jeden modus3
 		constexpr  char miss = 'o';
 		constexpr  char unused = '~';
 		constexpr  char ship = '#';

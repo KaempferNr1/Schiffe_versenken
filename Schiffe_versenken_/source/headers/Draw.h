@@ -7,8 +7,6 @@ namespace battleships
 
 	class Draw
 	{
-
-		//friend int main();
 	public:
 		Draw();
 
